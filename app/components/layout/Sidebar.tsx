@@ -7,7 +7,7 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ onSettingsClick }) => {
     return (
-        <div className="w-20 bg-gray-900 border-r border-gray-800 flex flex-col items-center py-8 gap-8 shrink-0">
+        <div className="w-20 bg-slate-950 border-r border-white/5 flex flex-col items-center py-8 gap-8 shrink-0 relative z-20">
             <div className="text-blue-500 mb-4">
                 <Layers className="w-8 h-8" />
             </div>
@@ -18,13 +18,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSettingsClick }) => {
                 </button>
                 <button
                     onClick={onSettingsClick}
-                    className="p-4 text-gray-400 hover:text-white rounded-xl flex justify-center items-center transition hover:bg-gray-800"
+                    className="p-4 text-slate-400 hover:text-white rounded-xl flex justify-center items-center transition hover:bg-white/10"
                 >
                     <Settings className="w-6 h-6" />
                 </button>
             </nav>
 
-            <button className="p-4 text-red-500 hover:bg-red-900/20 rounded-xl flex justify-center items-center transition mb-4">
+            <button className="p-4 text-red-500 hover:bg-red-500/10 rounded-xl flex justify-center items-center transition mb-4">
                 <Power className="w-6 h-6" />
             </button>
         </div>

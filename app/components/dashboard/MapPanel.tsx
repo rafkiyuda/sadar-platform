@@ -9,7 +9,7 @@ interface MapPanelProps {
 
 export const MapPanel: React.FC<MapPanelProps> = ({ status, onEditContact }) => {
     return (
-        <div className="h-full w-full relative bg-gray-800 rounded-3xl overflow-hidden border border-gray-700 shadow-2xl">
+        <div className="h-full w-full relative bg-slate-900 rounded-3xl overflow-hidden border border-white/5 shadow-2xl">
             {/* Mock Map Background */}
             <div className="absolute inset-0 bg-[url('https://api.mapbox.com/styles/v1/mapbox/dark-v10/static/106.8272, -6.1751,14,0,60/800x600?access_token=Pk.eyJ1IjoibW9jayIsImEiOiJjamZ5In0.1')] bg-cover bg-center opacity-70 grayscale-[30%]"
                 style={{ backgroundColor: '#1f2937' }}>
@@ -19,7 +19,7 @@ export const MapPanel: React.FC<MapPanelProps> = ({ status, onEditContact }) => 
 
             {/* Navigation Overlay */}
             <div className="absolute top-4 right-4 flex flex-col gap-2">
-                <button className="bg-gray-900/90 p-3 rounded-xl text-white shadow-lg backdrop-blur-sm">
+                <button className="bg-slate-900/90 p-3 rounded-xl text-white shadow-lg backdrop-blur-sm border border-white/10 hover:bg-blue-600 transition">
                     <Navigation className="w-6 h-6" />
                 </button>
             </div>
@@ -36,8 +36,8 @@ export const MapPanel: React.FC<MapPanelProps> = ({ status, onEditContact }) => 
             </div>
 
             {/* Recommendation UI (Bottom Overlay) */}
-            <div className="absolute bottom-6 left-6 right-6 flex gap-4 items-end">
-                <div className="flex-1 bg-black/80 backdrop-blur-md text-white p-4 rounded-2xl border border-gray-700 flex items-center justify-between shadow-xl">
+            <div className="absolute bottom-6 left-6 right-6 flex flex-col md:flex-row gap-4 items-end">
+                <div className="flex-1 bg-slate-900/90 backdrop-blur-xl text-white p-4 rounded-2xl border border-white/10 flex items-center justify-between shadow-2xl">
                     <div className="flex items-center gap-4">
                         <div className="bg-green-500/20 p-3 rounded-full">
                             <Coffee className="w-6 h-6 text-green-500" />
@@ -59,7 +59,7 @@ export const MapPanel: React.FC<MapPanelProps> = ({ status, onEditContact }) => 
             </div>
 
             {/* Show only if drowsy */}
-            {status !== 'SAFE' && (
+            {(status === 'DROWSY' || status === 'CRITICAL') && (
                 <div className="absolute top-4 left-4 right-16">
                     <div className="bg-red-500/90 text-white px-4 py-3 rounded-xl shadow-lg border border-red-400 backdrop-blur-sm animate-pulse flex items-center gap-3">
                         <MapPin className="w-5 h-5" />

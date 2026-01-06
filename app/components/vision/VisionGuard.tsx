@@ -15,11 +15,11 @@ export const VisionGuard: React.FC = React.memo(() => {
     }, [isMonitoring, isReady, startCamera]);
 
     return (
-        <div className="relative w-full overflow-hidden rounded-2xl bg-gray-900 border border-gray-800 shadow-lg">
+        <div className="relative w-full h-full overflow-hidden bg-slate-900/50 border-none shadow-none">
             {/* Main Video Feed */}
             <video
                 ref={videoRef}
-                className="w-full h-64 object-cover transform scale-x-[-1]" // Mirror effect
+                className="w-full h-full object-cover transform scale-x-[-1]" // Mirror effect
                 autoPlay
                 playsInline
                 muted

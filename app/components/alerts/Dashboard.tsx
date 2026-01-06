@@ -93,27 +93,27 @@ export const Dashboard: React.FC<DashboardProps> = ({ apiKey }) => {
     }
 
     return (
-        <div className="flex h-screen bg-black text-white overflow-hidden font-sans selection:bg-blue-500/30">
+        <div className="flex h-screen bg-slate-950 text-white overflow-hidden font-sans selection:bg-blue-500/30">
             {/* 1. Sidebar */}
             <Sidebar onSettingsClick={() => setIsSettingsOpen(true)} />
 
             {/* 2. Main Content Area */}
-            <div className="flex-1 flex flex-col h-full relative">
+            <div className="flex-1 flex flex-col h-full relative bg-gradient-to-br from-slate-950 to-blue-950/30">
 
                 {/* 3. Top Header */}
                 <Header status={status} />
 
                 {/* 4. Split View Content */}
-                <div className="flex-1 p-6 grid grid-cols-1 md:grid-cols-2 gap-6 h-[calc(100vh-4rem)]">
+                <div className="flex-1 p-4 md:p-6 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 h-[calc(100vh-5rem)] overflow-y-auto md:overflow-hidden">
 
                     {/* Left Panel: Vision (Camera) */}
-                    <div className="relative rounded-3xl overflow-hidden bg-gray-900 border border-gray-800 shadow-2xl flex flex-col">
+                    <div className="relative rounded-3xl overflow-hidden bg-slate-900 border border-white/5 shadow-2xl flex flex-col min-h-[300px]">
                         {/* Camera container */}
-                        <div className="flex-1 relative overflow-hidden">
+                        <div className="flex-1 relative overflow-hidden group">
                             <VisionGuard />
 
                             {/* Overlay for Critical Alert */}
-                            {status !== 'SAFE' && (
+                            {(status === 'DROWSY' || status === 'CRITICAL') && (
                                 <div className="absolute top-6 left-1/2 -translate-x-1/2 z-20 w-[90%]">
                                     <div className={`p-4 rounded-xl border backdrop-blur-md shadow-lg flex items-center justify-center gap-3 animate-pulse ${status === 'CRITICAL' ? 'bg-red-500/80 border-red-400 text-white' : 'bg-orange-500/80 border-orange-400 text-white'
                                         }`}>
@@ -127,21 +127,21 @@ export const Dashboard: React.FC<DashboardProps> = ({ apiKey }) => {
                         </div>
 
                         {/* Bottom Status Strip (Vision Panel) */}
-                        <div className="h-24 bg-gray-900 border-t border-gray-800 p-4 flex items-center justify-between">
+                        <div className="h-20 bg-slate-900/90 backdrop-blur-md border-t border-white/5 p-4 flex items-center justify-between z-10">
                             <div>
-                                <p className="text-xs text-gray-500 font-bold uppercase mb-1">Driver Monitoring system</p>
+                                <p className="text-[10px] text-slate-400 font-bold uppercase mb-1 tracking-widest">Driver Monitoring System</p>
                                 <div className="flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                                    <span className="text-sm text-gray-300">Face Tracking Active</span>
+                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
+                                    <span className="text-xs text-slate-300 font-medium">Face Tracking Active</span>
                                 </div>
                             </div>
-                            <div className="w-px h-10 bg-gray-800"></div>
+                            <div className="w-px h-8 bg-white/5"></div>
                             <VoiceAssistant apiKey={apiKey} />
                         </div>
                     </div>
 
                     {/* Right Panel: Map & Navigation */}
-                    <div className="relative rounded-3xl overflow-hidden bg-gray-800 h-full">
+                    <div className="relative rounded-3xl overflow-hidden bg-slate-900 h-full min-h-[300px] border border-white/5 shadow-2xl">
                         <MapPanel status={status} onEditContact={() => setIsSettingsOpen(true)} />
                     </div>
 
