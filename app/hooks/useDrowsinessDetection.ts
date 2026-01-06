@@ -143,7 +143,10 @@ export function useDrowsinessDetection() {
     }, [isMonitoring, faceLandmarker, processVideo]);
 
     // Camera setup helper
-    const startCamera = async () => {
+    const startCamera = useCallback(async () => {
+        // If we already have a stream, don't re-initialize
+        if (videoRef.current && videoRef.current.srcObject) return;
+
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({
@@ -168,7 +171,7 @@ export function useDrowsinessDetection() {
                 console.error("Error starting camera:", err);
             }
         }
-    };
+    }, []);
 
     return { videoRef, startCamera, isReady: !!faceLandmarker };
 }
