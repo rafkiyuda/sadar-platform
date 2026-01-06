@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+// import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function POST(request: Request) {
     const { message } = await request.json();
@@ -10,12 +10,14 @@ export async function POST(request: Request) {
     }
 
     try {
-        const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+        // const genAI = new GoogleGenerativeAI(apiKey);
+        // const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
-        const result = await model.generateContent(message);
-        const response = await result.response;
-        const text = response.text();
+        // const result = await model.generateContent(message);
+        // const response = await result.response;
+        // const text = response.text();
+
+        const text = "AI Assistant is currently disabled pending environment setup.";
 
         console.log(`[GEMINI] Received message: ${message}`);
         console.log(`[GEMINI] Response: ${text}`);

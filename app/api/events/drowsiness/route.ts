@@ -9,13 +9,17 @@ export async function POST(request: Request) {
         console.log(` [EVENT] Driver Status Change: ${status} at ${new Date(timestamp).toISOString()}`);
 
         // Save to Database (Postgres/Supabase)
-        const { error } = await supabase
-            .from('drowsiness_events')
-            .insert({ status, timestamp: new Date(timestamp).toISOString() });
+        // Save to Database (Postgres/Supabase)
+        if (supabase) {
+            const { error } = await supabase
+                .from('drowsiness_events')
+                .insert({ status, timestamp: new Date(timestamp).toISOString() });
 
-        if (error) {
-            console.error("Supabase error:", error);
-            // We don't block the response on DB error for the client, but we log it.
+            if (error) {
+                console.error("Supabase error:", error);
+            }
+        } else {
+            console.log("Supabase client disabled, skipping DB save.");
         }
 
         return NextResponse.json({ success: true });
