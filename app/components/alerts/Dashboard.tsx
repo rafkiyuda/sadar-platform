@@ -104,21 +104,26 @@ export const Dashboard: React.FC<DashboardProps> = ({ apiKey }) => {
                 <Header status={status} />
 
                 {/* 4. Split View Content */}
-                <div className="flex-1 p-4 md:p-6 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 h-[calc(100vh-5rem)] overflow-y-auto md:overflow-hidden">
+                {/* 4. Split View Content - Forced Row layout as requested */}
+                <div className="flex-1 p-6 flex flex-row gap-6 h-[calc(100vh-5rem)] overflow-hidden">
 
                     {/* Left Panel: Vision (Camera) */}
-                    <div className="relative rounded-3xl overflow-hidden bg-slate-900 border border-white/5 shadow-2xl flex flex-col min-h-[300px]">
+                    {/* Left Panel: Vision (Camera) */}
+                    <div className="w-1/2 relative rounded-[2.5rem] overflow-hidden bg-slate-900 border-2 border-blue-500/20 shadow-[0_0_50px_rgba(59,130,246,0.15)] flex flex-col min-h-[300px] hover:border-blue-500/50 transition-all duration-500 group">
+                        {/* Glowing corner effects */}
+                        <div className="absolute top-0 left-0 w-20 h-20 bg-blue-500/10 blur-xl rounded-full -translate-x-10 -translate-y-10 group-hover:bg-blue-500/20 transition-all"></div>
+
                         {/* Camera container */}
-                        <div className="flex-1 relative overflow-hidden group">
+                        <div className="flex-1 relative overflow-hidden">
                             <VisionGuard />
 
                             {/* Overlay for Critical Alert */}
                             {(status === 'DROWSY' || status === 'CRITICAL') && (
                                 <div className="absolute top-6 left-1/2 -translate-x-1/2 z-20 w-[90%]">
-                                    <div className={`p-4 rounded-xl border backdrop-blur-md shadow-lg flex items-center justify-center gap-3 animate-pulse ${status === 'CRITICAL' ? 'bg-red-500/80 border-red-400 text-white' : 'bg-orange-500/80 border-orange-400 text-white'
+                                    <div className={`p-4 rounded-xl border backdrop-blur-md shadow-lg flex items-center justify-center gap-3 animate-pulse ${status === 'CRITICAL' ? 'bg-red-500/80 border-red-400 text-white shadow-[0_0_30px_rgba(239,68,68,0.5)]' : 'bg-orange-500/80 border-orange-400 text-white shadow-[0_0_30px_rgba(249,115,22,0.5)]'
                                         }`}>
                                         <div className="w-3 h-3 bg-white rounded-full animate-ping"></div>
-                                        <span className="font-bold text-lg tracking-wider uppercase">
+                                        <span className="font-bold text-lg tracking-wider uppercase drop-shadow-md">
                                             {status === 'CRITICAL' ? 'MICROSLEEP DETECTED!' : 'DROWSINESS DETECTED'}
                                         </span>
                                     </div>
@@ -127,21 +132,28 @@ export const Dashboard: React.FC<DashboardProps> = ({ apiKey }) => {
                         </div>
 
                         {/* Bottom Status Strip (Vision Panel) */}
-                        <div className="h-20 bg-slate-900/90 backdrop-blur-md border-t border-white/5 p-4 flex items-center justify-between z-10">
+                        <div className="h-20 bg-slate-900/80 backdrop-blur-xl border-t border-white/5 p-4 flex items-center justify-between z-10 relative">
                             <div>
                                 <p className="text-[10px] text-slate-400 font-bold uppercase mb-1 tracking-widest">Driver Monitoring System</p>
                                 <div className="flex items-center gap-2">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
+                                    <div className="relative">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse relative z-10"></div>
+                                        <div className="absolute inset-0 bg-emerald-500 blur-sm animate-pulse"></div>
+                                    </div>
                                     <span className="text-xs text-slate-300 font-medium">Face Tracking Active</span>
                                 </div>
                             </div>
-                            <div className="w-px h-8 bg-white/5"></div>
+                            <div className="w-px h-8 bg-gradient-to-b from-transparent via-white/10 to-transparent"></div>
                             <VoiceAssistant apiKey={apiKey} />
                         </div>
                     </div>
 
                     {/* Right Panel: Map & Navigation */}
-                    <div className="relative rounded-3xl overflow-hidden bg-slate-900 h-full min-h-[300px] border border-white/5 shadow-2xl">
+                    {/* Right Panel: Map & Navigation */}
+                    <div className="w-1/2 relative rounded-[2.5rem] overflow-hidden bg-slate-900 h-full min-h-[300px] border-2 border-teal-500/20 shadow-[0_0_50px_rgba(20,184,166,0.15)] hover:border-teal-500/50 transition-all duration-500 group">
+                        {/* Glowing corner effects */}
+                        <div className="absolute top-0 right-0 w-20 h-20 bg-teal-500/10 blur-xl rounded-full translate-x-10 -translate-y-10 group-hover:bg-teal-500/20 transition-all"></div>
+
                         <MapPanel status={status} onEditContact={() => setIsSettingsOpen(true)} />
                     </div>
 
