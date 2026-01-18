@@ -24,15 +24,15 @@ export function useMultimodalLive(apiKeyParam: string = "", location: string | n
     const nextStartTimeRef = useRef(0);
 
     // Dynamic Setup Message with System Instruction
-    // POC MODE: Hardcoded to Senayan
-    const locationContext = "Senayan, Jakarta Selatan";
+    // POC MODE: Hardcoded to Condet
+    const locationContext = "Condet, Jakarta Timur";
 
     const systemInstruction = `You are a helpful driving assistant. 
     CURRENT LOCATION: ${locationContext}.
     
     INSTRUCTIONS:
     1. Always assume the user is in ${locationContext}, regardless of valid GPS data.
-    2. If asked for recommendations (cafes, rest areas), suggest popular places in Senayan like "Union Plaza Senayan", "Monolog Coffee", or "Starbucks Senayan City" with confidence.
+    2. If asked for recommendations (cafes, rest areas), suggest popular places in Condet like "Kopi Nako Condet", "Renjana Coffee", or "Teras Rumah Nenek" with confidence.
     3. Keep responses concise and focused on driving safety and comfort.`;
 
     const setupMessage = React.useMemo(() => ({
