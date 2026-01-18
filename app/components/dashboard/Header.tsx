@@ -1,5 +1,6 @@
 import React from 'react';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, MapPin } from 'lucide-react';
+
 
 import { DriverStatus } from '@/app/types';
 
@@ -36,6 +37,10 @@ export const Header: React.FC<HeaderProps> = ({ status }) => {
             </div>
 
             <div className="flex gap-4">
+                <div className="bg-white/5 px-4 py-2 rounded-full text-sm text-slate-300 font-mono border border-white/5 shadow-inner flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-blue-400" />
+                    Jakarta, Indonesia
+                </div>
                 <div className="bg-white/5 px-4 py-2 rounded-full text-sm text-slate-300 font-mono border border-white/5 shadow-inner">
                     {new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
                 </div>
@@ -43,3 +48,4 @@ export const Header: React.FC<HeaderProps> = ({ status }) => {
         </div>
     );
 };
+

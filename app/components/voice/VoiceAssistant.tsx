@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Mic, MicOff, Activity } from 'lucide-react';
 import { useMultimodalLive } from '@/app/hooks/useMultimodalLive';
 
+import { useDriverStore } from '@/app/lib/store/useDriverStore';
+
 interface VoiceAssistantProps {
     apiKey: string;
 }
@@ -9,6 +11,17 @@ interface VoiceAssistantProps {
 export const VoiceAssistant: React.FC<VoiceAssistantProps> = React.memo(({ apiKey }) => {
     const { connect, disconnect, status, volume, errorMessage } = useMultimodalLive(apiKey);
     const [isActive, setIsActive] = useState(false);
+    const incrementCallDuration = useDriverStore((state) => state.incrementCallDuration);
+
+    useEffect(() => {
+        let interval: NodeJS.Timeout;
+        if (status === 'connected') {
+            interval = setInterval(() => {
+                incrementCallDuration(1);
+            }, 1000);
+        }
+        return () => clearInterval(interval);
+    }, [status, incrementCallDuration]);
 
     const toggleConnection = () => {
         if (status === 'connected' || status === 'connecting') {
@@ -19,6 +32,7 @@ export const VoiceAssistant: React.FC<VoiceAssistantProps> = React.memo(({ apiKe
             setIsActive(true);
         }
     };
+
 
     // calculate visualizer scale based on volume
     // volume is usually 0.0 to 1.0 (rms)
@@ -69,9 +83,9 @@ export const VoiceAssistant: React.FC<VoiceAssistantProps> = React.memo(({ apiKe
             </div>
 
             {/* Error Message */}
-            {errorMessage && status === 'disconnected' && (
-                <div className="text-center max-w-xs">
-                    <div className="text-xs text-red-400 bg-red-900/30 px-4 py-2 rounded-lg border border-red-800/50">
+            {errorMessage && (status === 'disconnected' || status === 'error') && (
+                <div className="text-center max-w-xs absolute top-24 z-50">
+                    <div className="text-xs text-red-400 bg-red-900/90 px-4 py-2 rounded-lg border border-red-800/50 shadow-lg backdrop-blur-sm">
                         {errorMessage}
                     </div>
                 </div>

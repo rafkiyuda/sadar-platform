@@ -19,7 +19,7 @@ export const VisionGuard: React.FC = React.memo(() => {
             {/* Main Video Feed */}
             <video
                 ref={videoRef}
-                className="w-full h-full object-cover transform scale-x-[-1] opacity-90" // Mirror effect
+                className="w-full h-full object-cover transform scale-x-[-1] opacity-90 will-change-transform" // Mirror effect
                 autoPlay
                 playsInline
                 muted
@@ -29,7 +29,7 @@ export const VisionGuard: React.FC = React.memo(() => {
 
             {/* Overlay Statistics (Debug/Info) */}
             <div className="absolute top-4 left-4 right-4 flex justify-between items-start pointer-events-none z-10">
-                <div className="bg-slate-950/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 flex items-center gap-2 shadow-lg">
+                <div className="bg-slate-950/80 px-3 py-1.5 rounded-full border border-white/10 flex items-center gap-2 shadow-lg">
                     <div className={`w-2 h-2 rounded-full ${isReady ? "bg-emerald-500 animate-pulse" : "bg-yellow-500"}`}></div>
                     <span className="text-[10px] font-mono text-slate-300 tracking-wider">
                         {isReady ? "SYSTEM ACTIVE" : "INITIALIZING..."}
@@ -37,7 +37,7 @@ export const VisionGuard: React.FC = React.memo(() => {
                 </div>
 
                 {isReady && (
-                    <div className="bg-slate-950/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 shadow-lg">
+                    <div className="bg-slate-950/80 px-3 py-1.5 rounded-full border border-white/10 shadow-lg">
                         <span className="text-[10px] font-mono text-blue-400 tracking-wider">EAR: {ear.toFixed(2)}</span>
                     </div>
                 )}

@@ -5,9 +5,10 @@ type LiveStatus = 'disconnected' | 'connecting' | 'connected' | 'error';
 
 const MODEL = "models/gemini-2.0-flash-exp";
 const HOST = "generativelanguage.googleapis.com";
-const WS_URL = `wss://${HOST}/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContent`;
+const WS_URL = `wss://${HOST}/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent`;
 
-export function useMultimodalLive(apiKey: string) {
+export function useMultimodalLive(apiKeyParam: string = "") {
+    const apiKey = apiKeyParam || process.env.NEXT_PUBLIC_GEMINI_API_KEY || "";
     const [status, setStatus] = useState<LiveStatus>('disconnected');
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const websocketRef = useRef<WebSocket | null>(null);
