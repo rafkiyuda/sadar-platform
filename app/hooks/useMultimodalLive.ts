@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { base64ToArrayBuffer, arrayBufferToBase64, floatTo16BitPCM, downsampleTo16kHz } from '@/app/lib/audio-utils';
 
 type LiveStatus = 'disconnected' | 'connecting' | 'connected' | 'error';
@@ -28,7 +28,7 @@ export function useMultimodalLive(apiKeyParam: string = "", location: { lat: num
         ? `You are a helpful driving assistant. The user is currently at coordinates: Lat ${location.lat}, Lng ${location.lng}. Use this to provide relevant location-based advice.`
         : "You are a helpful driving assistant.";
 
-    const setupMessage = {
+    const setupMessage = React.useMemo(() => ({
         setup: {
             model: MODEL,
             generationConfig: {
@@ -41,7 +41,7 @@ export function useMultimodalLive(apiKeyParam: string = "", location: { lat: num
                 parts: [{ text: systemInstruction }]
             }
         }
-    };
+    }), [systemInstruction]);
 
     const connect = useCallback(async () => {
         if (!apiKey) {
@@ -111,7 +111,7 @@ export function useMultimodalLive(apiKeyParam: string = "", location: { lat: num
             setStatus('error');
             setErrorMessage("Failed to establish connection.");
         }
-    }, [apiKey]);
+    }, [apiKey, setupMessage]);
 
     const disconnect = useCallback(() => {
         if (websocketRef.current) {
