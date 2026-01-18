@@ -1,23 +1,23 @@
 import { NextResponse } from 'next/server';
-// import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function POST(request: Request) {
     const { message } = await request.json();
-    const apiKey = process.env.GEMINI_API_KEY;
+    // Use NEXT_PUBLIC_GEMINI_API_KEY to match user's .env setup
+    const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
         return NextResponse.json({ error: 'Gemini API Key not configured' }, { status: 500 });
     }
 
     try {
-        // const genAI = new GoogleGenerativeAI(apiKey);
-        // const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+        const genAI = new GoogleGenerativeAI(apiKey);
+        // Use gemini-2.0-flash-exp to match the multimodal live capabilities
+        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
 
-        // const result = await model.generateContent(message);
-        // const response = await result.response;
-        // const text = response.text();
-
-        const text = "AI Assistant is currently disabled pending environment setup.";
+        const result = await model.generateContent(message);
+        const response = await result.response;
+        const text = response.text();
 
         console.log(`[GEMINI] Received message: ${message}`);
         console.log(`[GEMINI] Response: ${text}`);
