@@ -27,12 +27,13 @@ export const VoiceAssistant: React.FC<VoiceAssistantProps> = React.memo(({ apiKe
                 setLocation(address);
             } else {
                 console.error("Geocoding API Error:", data.status, data.error_message);
-                // Fallback but with a clear indicator it's just coords
-                setLocation(`Coordinates: ${lat.toFixed(4)}, ${lng.toFixed(4)} (Address Lookup Failed: ${data.status})`);
+                // CRITICAL: Do NOT show coords to AI, or it will read them. 
+                // Just say null so it knows it doesn't have the address.
+                setLocation(null);
             }
         } catch (error) {
             console.error("Geocoding failed:", error);
-            setLocation(`Coordinates: ${lat.toFixed(4)}, ${lng.toFixed(4)} (Network Error)`);
+            setLocation(null);
         }
     };
 
