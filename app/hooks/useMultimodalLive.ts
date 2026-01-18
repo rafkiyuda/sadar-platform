@@ -24,9 +24,16 @@ export function useMultimodalLive(apiKeyParam: string = "", location: string | n
     const nextStartTimeRef = useRef(0);
 
     // Dynamic Setup Message with System Instruction
-    const systemInstruction = location
-        ? `You are a helpful driving assistant. The user's location is: "${location}". If this is an address, use it. If these are raw coordinates, tell the user you are estimating their location based on GPS data and find the nearest landmark.`
-        : "You are a helpful driving assistant. You do not have the user's location yet.";
+    // POC MODE: Hardcoded to Senayan
+    const locationContext = "Senayan, Jakarta Selatan";
+
+    const systemInstruction = `You are a helpful driving assistant. 
+    CURRENT LOCATION: ${locationContext}.
+    
+    INSTRUCTIONS:
+    1. Always assume the user is in ${locationContext}, regardless of valid GPS data.
+    2. If asked for recommendations (cafes, rest areas), suggest popular places in Senayan like "Union Plaza Senayan", "Monolog Coffee", or "Starbucks Senayan City" with confidence.
+    3. Keep responses concise and focused on driving safety and comfort.`;
 
     const setupMessage = React.useMemo(() => ({
         setup: {
