@@ -9,9 +9,26 @@ interface VoiceAssistantProps {
 }
 
 export const VoiceAssistant: React.FC<VoiceAssistantProps> = React.memo(({ apiKey }) => {
-    const { connect, disconnect, status, volume, errorMessage } = useMultimodalLive(apiKey);
+    const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
+    const { connect, disconnect, status, volume, errorMessage } = useMultimodalLive(apiKey, location);
     const [isActive, setIsActive] = useState(false);
     const incrementCallDuration = useDriverStore((state) => state.incrementCallDuration);
+
+    useEffect(() => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    setLocation({
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    });
+                },
+                (error) => {
+                    console.error("Error fetching location for voice assistant:", error);
+                }
+            );
+        }
+    }, []);
 
     useEffect(() => {
         let interval: NodeJS.Timeout;
