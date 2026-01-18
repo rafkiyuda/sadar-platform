@@ -25,8 +25,8 @@ export function useMultimodalLive(apiKeyParam: string = "", location: string | n
 
     // Dynamic Setup Message with System Instruction
     const systemInstruction = location
-        ? `You are a helpful driving assistant. The user is currently at: ${location}. Use this to provide relevant location-based advice.`
-        : "You are a helpful driving assistant.";
+        ? `You are a helpful driving assistant. The user's location is: "${location}". If this is an address, use it. If these are raw coordinates, tell the user you are estimating their location based on GPS data and find the nearest landmark.`
+        : "You are a helpful driving assistant. You do not have the user's location yet.";
 
     const setupMessage = React.useMemo(() => ({
         setup: {

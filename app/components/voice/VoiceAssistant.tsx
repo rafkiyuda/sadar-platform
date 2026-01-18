@@ -20,16 +20,19 @@ export const VoiceAssistant: React.FC<VoiceAssistantProps> = React.memo(({ apiKe
                 `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`
             );
             const data = await response.json();
-            if (data.results && data.results[0]) {
+            if (data.status === 'OK' && data.results && data.results[0]) {
                 const address = data.results[0].formatted_address;
                 console.log("Resolved Address:", address);
-                setLocation(`Address: ${address} (Lat: ${lat}, Lng: ${lng})`);
+                // Simplify address for AI (remove postal code etc if too long)
+                setLocation(address);
             } else {
-                setLocation(`Lat: ${lat}, Lng: ${lng}`);
+                console.error("Geocoding API Error:", data.status, data.error_message);
+                // Fallback but with a clear indicator it's just coords
+                setLocation(`Coordinates: ${lat.toFixed(4)}, ${lng.toFixed(4)} (Address Lookup Failed: ${data.status})`);
             }
         } catch (error) {
             console.error("Geocoding failed:", error);
-            setLocation(`Lat: ${lat}, Lng: ${lng}`);
+            setLocation(`Coordinates: ${lat.toFixed(4)}, ${lng.toFixed(4)} (Network Error)`);
         }
     };
 
@@ -113,6 +116,11 @@ export const VoiceAssistant: React.FC<VoiceAssistantProps> = React.memo(({ apiKe
                 }`}>
                 {status === 'connected' ? 'LIVE CALL ACTIVE' :
                     status === 'connecting' ? 'CONNECTING...' : 'START LIVE CALL'}
+            </div>
+
+            {/* Debug Location Display */}
+            <div className="text-[10px] text-slate-500 max-w-[200px] text-center mt-2 font-mono">
+                {location || "Waiting for GPS..."}
             </div>
 
             {/* Error Message */}
