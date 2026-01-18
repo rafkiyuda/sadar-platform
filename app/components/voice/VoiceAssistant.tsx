@@ -9,26 +9,42 @@ interface VoiceAssistantProps {
 }
 
 export const VoiceAssistant: React.FC<VoiceAssistantProps> = React.memo(({ apiKey }) => {
-    const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
+    const [location, setLocation] = useState<string | null>(null);
     const { connect, disconnect, status, volume, errorMessage } = useMultimodalLive(apiKey, location);
     const [isActive, setIsActive] = useState(false);
     const incrementCallDuration = useDriverStore((state) => state.incrementCallDuration);
+
+    const fetchAddress = async (lat: number, lng: number) => {
+        try {
+            const response = await fetch(
+                `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`
+            );
+            const data = await response.json();
+            if (data.results && data.results[0]) {
+                const address = data.results[0].formatted_address;
+                console.log("Resolved Address:", address);
+                setLocation(`Address: ${address} (Lat: ${lat}, Lng: ${lng})`);
+            } else {
+                setLocation(`Lat: ${lat}, Lng: ${lng}`);
+            }
+        } catch (error) {
+            console.error("Geocoding failed:", error);
+            setLocation(`Lat: ${lat}, Lng: ${lng}`);
+        }
+    };
 
     useEffect(() => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    setLocation({
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
-                    });
+                    fetchAddress(position.coords.latitude, position.coords.longitude);
                 },
                 (error) => {
                     console.error("Error fetching location for voice assistant:", error);
                 }
             );
         }
-    }, []);
+    }, [apiKey]);
 
     useEffect(() => {
         let interval: NodeJS.Timeout;

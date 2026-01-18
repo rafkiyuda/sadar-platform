@@ -7,7 +7,7 @@ const MODEL = "models/gemini-2.0-flash-exp";
 const HOST = "generativelanguage.googleapis.com";
 const WS_URL = `wss://${HOST}/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent`;
 
-export function useMultimodalLive(apiKeyParam: string = "", location: { lat: number; lng: number } | null = null) {
+export function useMultimodalLive(apiKeyParam: string = "", location: string | null = null) {
     const apiKey = apiKeyParam || process.env.NEXT_PUBLIC_GEMINI_API_KEY || "";
     const [status, setStatus] = useState<LiveStatus>('disconnected');
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -25,7 +25,7 @@ export function useMultimodalLive(apiKeyParam: string = "", location: { lat: num
 
     // Dynamic Setup Message with System Instruction
     const systemInstruction = location
-        ? `You are a helpful driving assistant. The user is currently at coordinates: Lat ${location.lat}, Lng ${location.lng}. Use this to provide relevant location-based advice.`
+        ? `You are a helpful driving assistant. The user is currently at: ${location}. Use this to provide relevant location-based advice.`
         : "You are a helpful driving assistant.";
 
     const setupMessage = React.useMemo(() => ({
