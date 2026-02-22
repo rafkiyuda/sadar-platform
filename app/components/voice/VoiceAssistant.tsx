@@ -80,11 +80,11 @@ export const VoiceAssistant: React.FC<VoiceAssistantProps> = React.memo(({ apiKe
         <div className="flex flex-col items-center gap-4">
             <button
                 onClick={toggleConnection}
-                className={`relative group w-20 h-20 rounded-full flex items-center justify-center transition-all duration-300 shadow-2xl ${status === 'connected'
-                    ? 'bg-red-500 hover:bg-red-600 shadow-red-500/50'
+                className={`relative group w-20 h-20 rounded-full flex items-center justify-center transition-all duration-300 shadow-xl ${status === 'connected'
+                    ? 'bg-red-500 hover:bg-red-600 shadow-red-500/30'
                     : status === 'connecting'
-                        ? 'bg-yellow-500 animate-pulse'
-                        : 'bg-blue-600 hover:bg-blue-500 shadow-blue-500/50'
+                        ? 'bg-orange-400 animate-pulse'
+                        : 'bg-orange-600 hover:bg-orange-500 shadow-orange-500/30'
                     }`}
             >
                 {/* Ping animation when active */}
@@ -107,27 +107,27 @@ export const VoiceAssistant: React.FC<VoiceAssistantProps> = React.memo(({ apiKe
                     {status === 'connected' ? (
                         <Mic className="w-8 h-8 text-white fill-current" />
                     ) : (
-                        <MicOff className="w-8 h-8 text-white/80" />
+                        <MicOff className="w-8 h-8 text-white/90" />
                     )}
                 </div>
             </button>
 
-            <div className={`text-sm font-bold tracking-wider transition-colors ${status === 'connected' ? 'text-green-400' :
-                status === 'connecting' ? 'text-yellow-400' : 'text-gray-500'
+            <div className={`text-sm font-bold tracking-wider transition-colors ${status === 'connected' ? 'text-emerald-600' :
+                status === 'connecting' ? 'text-orange-500' : 'text-slate-400'
                 }`}>
                 {status === 'connected' ? 'LIVE CALL ACTIVE' :
                     status === 'connecting' ? 'CONNECTING...' : 'START LIVE CALL'}
             </div>
 
             {/* Debug Location Display */}
-            <div className="text-[10px] text-slate-500 max-w-[200px] text-center mt-2 font-mono">
+            <div className="text-[10px] text-slate-400 max-w-[200px] text-center mt-2 font-mono">
                 {location || "Waiting for GPS..."}
             </div>
 
             {/* Error Message */}
             {errorMessage && (status === 'disconnected' || status === 'error') && (
                 <div className="text-center max-w-xs absolute top-24 z-50">
-                    <div className="text-xs text-red-400 bg-red-900/90 px-4 py-2 rounded-lg border border-red-800/50 shadow-lg backdrop-blur-sm">
+                    <div className="text-xs text-red-600 bg-red-50 px-4 py-2 rounded-lg border border-red-200 shadow-md">
                         {errorMessage}
                     </div>
                 </div>
