@@ -84,10 +84,27 @@ export function useDrowsinessDetection() {
 
                 setEAR(avgEAR);
 
-                // State Machine for Drowsiness
-                // Simple logic: if EAR < Threshold for Time Window -> Drowsy
+                // --- Dynamic Threshold Calculation ---
+                // Get the current state directly to avoid stale closures in RAF
+                const state = useDriverStore.getState();
+                const baseline = state.baselineEar || 0.30; // Fallback to 0.30 if no calibration
+                const sensitivity = state.aiSensitivity || 5;
 
-                if (avgEAR < EAR_THRESHOLD_DROWSY) {
+                // Sensitivity 1 (Strict) -> 10 (Lenient). 
+                // Default threshold is ~75% of baseline. 
+                // Lenient (10) means the threshold drops to ~50% of baseline (eyes must be very closed).
+                // Strict (1) means threshold is ~90% of baseline (even slightly squinting triggers it).
+
+                // Map sensitivity 1-10 to a multiplier roughly 0.9 to 0.5
+                // Formula: 0.95 - (sensitivity * 0.045)
+                const drowsyMultiplier = Math.max(0.4, 0.95 - (sensitivity * 0.045));
+                const criticalMultiplier = drowsyMultiplier * 0.8; // 20% lower than Drowsy threshold
+
+                const dynamicDrowsyThreshold = baseline * drowsyMultiplier;
+                const dynamicCriticalThreshold = baseline * criticalMultiplier;
+
+                // State Machine for Drowsiness
+                if (avgEAR < dynamicDrowsyThreshold) {
                     if (drowsyStartTime.current === null) {
                         drowsyStartTime.current = Date.now();
                     }
@@ -96,7 +113,7 @@ export function useDrowsinessDetection() {
 
                     if (duration > TIME_WINDOW_MS) {
                         // Check severity
-                        if (avgEAR < EAR_THRESHOLD_CRITICAL) {
+                        if (avgEAR < dynamicCriticalThreshold) {
                             setStatus('CRITICAL');
                         } else {
                             setStatus('DROWSY');

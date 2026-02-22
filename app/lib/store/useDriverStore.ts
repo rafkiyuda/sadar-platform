@@ -12,6 +12,7 @@ export const useDriverStore = create<DriverState>()(
             status: 'NO_FACE', // Default state
             isMonitoring: false,
             ear: 0,
+            baselineEar: null,
             lastAlertTimestamp: 0,
             emergencyContact: '',
 
@@ -24,6 +25,7 @@ export const useDriverStore = create<DriverState>()(
 
             setStatus: (status: DriverStatus) => set({ status }),
             setEAR: (ear: number) => set({ ear }),
+            setBaselineEar: (ear: number) => set({ baselineEar: ear }),
             setIsMonitoring: (isMonitoring: boolean) => set({ isMonitoring }),
             setAiSensitivity: (sensitivity: number) => set({ aiSensitivity: sensitivity }),
 

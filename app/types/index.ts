@@ -17,6 +17,7 @@ export interface DriverState {
     status: DriverStatus;
     isMonitoring: boolean;
     ear: number; // Current Eye Aspect Ratio
+    baselineEar: number | null; // Calibrated natural EAR
     lastAlertTimestamp: number;
     emergencyContact?: string; // Optional initially
     tripStats: TripStats; // New trip stats
@@ -24,6 +25,7 @@ export interface DriverState {
 
     setStatus: (status: DriverStatus) => void;
     setEAR: (ear: number) => void;
+    setBaselineEar: (ear: number) => void;
     setIsMonitoring: (isMonitoring: boolean) => void;
     triggerAlert: () => void;
     setEmergencyContact: (contact: string) => void;
