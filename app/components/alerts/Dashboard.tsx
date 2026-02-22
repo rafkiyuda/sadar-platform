@@ -16,6 +16,7 @@ import { MapPanel } from '@/app/components/dashboard/MapPanel';
 import { TripReport } from '@/app/components/dashboard/TripReport';
 import { SettingsView } from '@/app/components/settings/SettingsView';
 import { AIChat } from '@/app/components/chat/AIChat';
+import { CalibrationView } from '@/app/components/vision/CalibrationView';
 
 interface DashboardProps {
     apiKey: string;
@@ -23,6 +24,7 @@ interface DashboardProps {
 
 export const Dashboard: React.FC<DashboardProps> = ({ apiKey }) => {
     const [hasStarted, setHasStarted] = useState(false);
+    const [isCalibrating, setIsCalibrating] = useState(false);
     const [currentView, setCurrentView] = useState<'dashboard' | 'report' | 'settings' | 'chat'>('dashboard');
     const {
         status,
@@ -38,6 +40,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ apiKey }) => {
 
 
     const handleStart = () => {
+        setIsCalibrating(true);
+    };
+
+    const handleCalibrationComplete = () => {
+        setIsCalibrating(false);
         initAudio();
         setHasStarted(true);
         setIsMonitoring(true);
@@ -86,6 +93,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ apiKey }) => {
 
     // If monitoring hasn't started, show the landing screen
     if (!hasStarted) {
+        if (isCalibrating) {
+            return <CalibrationView onComplete={handleCalibrationComplete} />;
+        }
+
         return (
             <div className="flex min-h-screen flex-col items-center justify-center p-6 bg-[#fafaf9] dark:bg-slate-950 text-slate-800 dark:text-slate-100 text-center relative overflow-hidden transition-colors duration-300">
                 {/* Background ambient glow */}

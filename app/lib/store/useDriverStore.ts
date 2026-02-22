@@ -20,10 +20,12 @@ export const useDriverStore = create<DriverState>()(
                 drowsyCount: 0,
                 callDuration: 0,
             },
+            aiSensitivity: 5, // Default sensitivity (1-10)
 
             setStatus: (status: DriverStatus) => set({ status }),
             setEAR: (ear: number) => set({ ear }),
             setIsMonitoring: (isMonitoring: boolean) => set({ isMonitoring }),
+            setAiSensitivity: (sensitivity: number) => set({ aiSensitivity: sensitivity }),
 
             triggerAlert: () => set({ lastAlertTimestamp: Date.now() }),
             setEmergencyContact: (contact: string) => set({ emergencyContact: contact }),

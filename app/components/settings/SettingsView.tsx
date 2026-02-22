@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Save, Phone, Shield, User, Bell } from 'lucide-react';
+import { Save, Phone, Shield, User, Bell, Eye } from 'lucide-react';
 import { useDriverStore } from '@/app/lib/store/useDriverStore';
 
 export const SettingsView: React.FC = () => {
-    const { emergencyContact, setEmergencyContact } = useDriverStore();
+    const { emergencyContact, setEmergencyContact, aiSensitivity, setAiSensitivity } = useDriverStore();
     const [tempContact, setTempContact] = useState('');
-    const [activeTab, setActiveTab] = useState<'general' | 'emergency'>('emergency');
+    const [tempSensitivity, setTempSensitivity] = useState(5);
+    const [activeTab, setActiveTab] = useState<'general' | 'emergency' | 'ai'>('emergency');
     const [notification, setNotification] = useState<string | null>(null);
 
     useEffect(() => {
         setTempContact(emergencyContact || '');
-    }, [emergencyContact]);
+        setTempSensitivity(aiSensitivity || 5);
+    }, [emergencyContact, aiSensitivity]);
 
     const handleSave = () => {
         setEmergencyContact(tempContact);
+        setAiSensitivity(tempSensitivity);
         setNotification('Settings saved successfully!');
         setTimeout(() => setNotification(null), 3000);
     };
@@ -38,6 +41,14 @@ export const SettingsView: React.FC = () => {
                     >
                         <Phone className="w-4 h-4" />
                         Emergency Contact
+                    </button>
+
+                    <button
+                        onClick={() => setActiveTab('ai')}
+                        className={`text-left px-4 py-3 rounded-xl text-sm font-medium transition-all flex items-center gap-3 ${activeTab === 'ai' ? 'bg-blue-600/20 text-blue-400 border border-blue-500/20' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+                    >
+                        <Eye className="w-4 h-4" />
+                        AI Vision
                     </button>
 
                     <button
@@ -96,6 +107,56 @@ export const SettingsView: React.FC = () => {
                                         <Shield className="w-3 h-3" />
                                         The number will be used for SMS alerts and emergency calls.
                                     </p>
+                                </div>
+                            </div>
+
+                            <div className="mt-auto pt-6 border-t border-white/5 flex justify-end">
+                                <button
+                                    onClick={handleSave}
+                                    className="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-blue-500/25 flex items-center gap-2 transition-all active:scale-95"
+                                >
+                                    <Save className="w-4 h-4" />
+                                    Save Changes
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'ai' && (
+                        <div className="flex flex-col h-full animate-in slide-in-from-right-4 fade-in duration-300">
+                            <div className="mb-8">
+                                <h4 className="text-3xl font-bold text-white mb-3">AI Vision Sensitivity</h4>
+                                <p className="text-slate-400">
+                                    Adjust how strictly the AI detects drowsiness. Lower values are stricter, higher values are more lenient. Useful for different eye shapes.
+                                </p>
+                            </div>
+
+                            <div className="flex-1 space-y-8">
+                                <div className="group max-w-xl">
+                                    <div className="flex justify-between items-center mb-4">
+                                        <label className="text-xs font-bold text-blue-400 uppercase tracking-wider">
+                                            Sensitivity Level: <span className="text-white text-base ml-2">{tempSensitivity}</span>
+                                        </label>
+                                        <span className="text-xs text-slate-500 font-medium">{tempSensitivity <= 3 ? 'Stricter' : tempSensitivity >= 8 ? 'More Lenient' : 'Balanced'}</span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        min="1"
+                                        max="10"
+                                        value={tempSensitivity}
+                                        onChange={(e) => setTempSensitivity(Number(e.target.value))}
+                                        className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500 border border-slate-700 focus:outline-none"
+                                    />
+                                    <div className="flex justify-between text-[10px] text-slate-500 mt-2 px-1">
+                                        <span>Highly Sensitive (1)</span>
+                                        <span>Balanced (5)</span>
+                                        <span>Lenient Calibration (10)</span>
+                                    </div>
+                                    <div className="mt-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl">
+                                        <p className="text-sm text-blue-200/80 leading-relaxed">
+                                            <strong>Pro Tip:</strong> If you naturally have narrower eyes and the AI triggers too frequently, try increasing the leniency level towards 8-10.
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
 

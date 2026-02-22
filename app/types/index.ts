@@ -20,12 +20,14 @@ export interface DriverState {
     lastAlertTimestamp: number;
     emergencyContact?: string; // Optional initially
     tripStats: TripStats; // New trip stats
+    aiSensitivity: number; // Sensitivity from 1 (Strict) to 10 (Lenient)
 
     setStatus: (status: DriverStatus) => void;
     setEAR: (ear: number) => void;
     setIsMonitoring: (isMonitoring: boolean) => void;
     triggerAlert: () => void;
     setEmergencyContact: (contact: string) => void;
+    setAiSensitivity: (sensitivity: number) => void;
 
     // New actions for trip reporting
     incrementDistance: (amount: number) => void;
