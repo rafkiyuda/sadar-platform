@@ -3,7 +3,7 @@ import { base64ToArrayBuffer, arrayBufferToBase64, floatTo16BitPCM, downsampleTo
 
 type LiveStatus = 'disconnected' | 'connecting' | 'connected' | 'error';
 
-const MODEL = "models/gemini-2.0-flash-exp";
+const MODEL = "models/gemini-2.0-flash";
 const HOST = "generativelanguage.googleapis.com";
 const WS_URL = `wss://${HOST}/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent`;
 

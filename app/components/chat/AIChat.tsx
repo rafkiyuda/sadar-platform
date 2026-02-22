@@ -29,7 +29,10 @@ export const AIChat: React.FC<AIChatProps> = ({ apiKey }) => {
 
     // Initialize Gemini API
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = genAI.getGenerativeModel({
+        model: 'gemini-2.0-flash',
+        systemInstruction: "Anda adalah asisten AI yang ahli, ramah, dan ringkas di dalam platform sistem monitoring keselamatan berkendara (SADAR). Tugas Anda adalah membantu pengemudi, memberikan informasi, atau menjawab pertanyaan terkait perjalanan. Jawablah menggunakan bahasa Indonesia."
+    });
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -66,8 +69,7 @@ export const AIChat: React.FC<AIChatProps> = ({ apiKey }) => {
             }));
 
             const chat = model.startChat({
-                history: history,
-                systemInstruction: "Anda adalah asisten AI yang ahli, ramah, dan ringkas di dalam platform sistem monitoring keselamatan berkendara (SADAR). Tugas Anda adalah membantu pengemudi, memberikan informasi, atau menjawab pertanyaan terkait perjalanan. Jawablah menggunakan bahasa Indonesia."
+                history: history
             });
 
             const result = await chat.sendMessage(userMessage);
@@ -139,8 +141,8 @@ export const AIChat: React.FC<AIChatProps> = ({ apiKey }) => {
                             >
                                 <div
                                     className={`px-5 py-3.5 rounded-2xl relative group ${message.role === 'user'
-                                            ? 'bg-[#325a6c] dark:bg-orange-600 text-white rounded-tr-sm'
-                                            : 'bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-100 dark:border-slate-700 rounded-tl-sm'
+                                        ? 'bg-[#325a6c] dark:bg-orange-600 text-white rounded-tr-sm'
+                                        : 'bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-100 dark:border-slate-700 rounded-tl-sm'
                                         }`}
                                 >
                                     <div className="prose prose-sm dark:prose-invert prose-p:leading-relaxed prose-pre:bg-slate-800 max-w-none">
@@ -186,8 +188,8 @@ export const AIChat: React.FC<AIChatProps> = ({ apiKey }) => {
                             type="submit"
                             disabled={!input.trim() || isLoading}
                             className={`absolute right-2 p-2.5 rounded-xl transition-all flex items-center justify-center ${input.trim() && !isLoading
-                                    ? 'bg-[#325a6c] dark:bg-orange-600 text-white hover:scale-105 active:scale-95 shadow-md shadow-[#325a6c]/20 dark:shadow-orange-600/20'
-                                    : 'bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed'
+                                ? 'bg-[#325a6c] dark:bg-orange-600 text-white hover:scale-105 active:scale-95 shadow-md shadow-[#325a6c]/20 dark:shadow-orange-600/20'
+                                : 'bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed'
                                 }`}
                         >
                             <Send className="w-4 h-4" />
