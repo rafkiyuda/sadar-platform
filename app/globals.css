@@ -1,9 +1,18 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
 @layer base {
   :root {
     --background: #fafaf9;
     --foreground: #0f172a;
+  }
+
+  .dark {
+    --background: #020617;
+    /* Slate 950 */
+    --foreground: #f8fafc;
+    /* Slate 50 */
   }
 }
 

@@ -13,8 +13,9 @@ import { Sidebar } from '@/app/components/layout/Sidebar';
 
 import { Header } from '@/app/components/dashboard/Header';
 import { MapPanel } from '@/app/components/dashboard/MapPanel';
-import { TripReport } from '@/app/components/dashboard/TripReport'; // New Import
+import { TripReport } from '@/app/components/dashboard/TripReport';
 import { SettingsView } from '@/app/components/settings/SettingsView';
+import { AIChat } from '@/app/components/chat/AIChat';
 
 interface DashboardProps {
     apiKey: string;
@@ -22,7 +23,7 @@ interface DashboardProps {
 
 export const Dashboard: React.FC<DashboardProps> = ({ apiKey }) => {
     const [hasStarted, setHasStarted] = useState(false);
-    const [currentView, setCurrentView] = useState<'dashboard' | 'report' | 'settings'>('dashboard');
+    const [currentView, setCurrentView] = useState<'dashboard' | 'report' | 'settings' | 'chat'>('dashboard');
     const {
         status,
         isMonitoring,
@@ -86,9 +87,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ apiKey }) => {
     // If monitoring hasn't started, show the landing screen
     if (!hasStarted) {
         return (
-            <div className="flex min-h-screen flex-col items-center justify-center p-6 bg-[#fafaf9] text-slate-800 text-center relative overflow-hidden">
+            <div className="flex min-h-screen flex-col items-center justify-center p-6 bg-[#fafaf9] dark:bg-slate-950 text-slate-800 dark:text-slate-100 text-center relative overflow-hidden transition-colors duration-300">
                 {/* Background ambient glow */}
-                <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
+                <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
                     <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-orange-500/10 blur-[120px] rounded-full"></div>
                     <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-rose-500/10 blur-[120px] rounded-full"></div>
                 </div>
@@ -97,11 +98,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ apiKey }) => {
 
                     {/* Settings button removed from landing page for simplicity in V2 */}
 
-                    <div className="mb-8 p-6 bg-white rounded-3xl border border-slate-100 shadow-sm animate-float">
+                    <div className="mb-8 p-6 bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm animate-float">
                         <img
                             src="/assets/sadar_logo.png"
                             alt="SADAR Logo"
-                            className="w-48 h-auto object-contain"
+                            className="w-48 h-auto object-contain dark:invert"
                         />
                     </div>
 
@@ -123,16 +124,16 @@ export const Dashboard: React.FC<DashboardProps> = ({ apiKey }) => {
 
 
     return (
-        <div className="flex h-screen bg-[#fafaf9] text-slate-800 overflow-hidden font-sans selection:bg-orange-500/30">
+        <div className="flex h-screen bg-[#fafaf9] dark:bg-slate-950 text-slate-800 dark:text-slate-200 overflow-hidden font-sans selection:bg-orange-500/30 transition-colors duration-300">
             {/* 1. Sidebar */}
             <Sidebar
-                onSettingsClick={() => setCurrentView('settings')} // Fallback or unused
+                onSettingsClick={() => setCurrentView('settings')}
                 onViewChange={setCurrentView}
                 currentView={currentView}
             />
 
             {/* 2. Main Content Area */}
-            <div className="flex-1 flex flex-col h-full relative bg-[#fafaf9]">
+            <div className="flex-1 flex flex-col h-full relative bg-[#fafaf9] dark:bg-slate-950 transition-colors duration-300">
 
                 {/* 3. Top Header */}
                 <Header status={status} />
@@ -142,12 +143,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ apiKey }) => {
                     <TripReport />
                 ) : currentView === 'settings' ? (
                     <SettingsView />
+                ) : currentView === 'chat' ? (
+                    <AIChat apiKey={apiKey} />
                 ) : (
                     <div className="flex-1 p-6 flex flex-row gap-6 h-[calc(100vh-5rem)] overflow-hidden">
                         {/* Left Panel: Vision (Camera) */}
-                        <div className="w-1/2 relative rounded-[2rem] overflow-hidden bg-white border border-slate-100 shadow-sm flex flex-col min-h-[300px] transition-all duration-500 group">
+                        <div className="w-1/2 relative rounded-[2rem] overflow-hidden bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col min-h-[300px] transition-all duration-500 group">
                             {/* Glowing corner effects */}
-                            <div className="absolute top-0 left-0 w-20 h-20 bg-orange-500/5 blur-xl rounded-full -translate-x-10 -translate-y-10 group-hover:bg-orange-500/10 transition-all"></div>
+                            <div className="absolute top-0 left-0 w-20 h-20 bg-orange-500/5 dark:bg-orange-500/10 blur-xl rounded-full -translate-x-10 -translate-y-10 group-hover:bg-orange-500/10 dark:group-hover:bg-orange-500/20 transition-all"></div>
 
                             {/* Camera container */}
                             <div className="flex-1 relative overflow-hidden">
@@ -156,7 +159,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ apiKey }) => {
                                 {/* Overlay for Critical Alert */}
                                 {(status === 'DROWSY' || status === 'CRITICAL') && (
                                     <div className="absolute top-6 left-1/2 -translate-x-1/2 z-20 w-[90%]">
-                                        <div className={`p-4 rounded-xl border backdrop-blur-md shadow-lg flex items-center justify-center gap-3 animate-pulse ${status === 'CRITICAL' ? 'bg-red-500/80 border-red-400 text-white shadow-[0_0_30px_rgba(239,68,68,0.5)]' : 'bg-orange-500/80 border-orange-400 text-white shadow-[0_0_30px_rgba(249,115,22,0.5)]'
+                                        <div className={`p-4 rounded-xl border backdrop-blur-md shadow-lg flex items-center justify-center gap-3 animate-pulse ${status === 'CRITICAL' ? 'bg-red-500/80 border-red-400 dark:border-red-600 text-white shadow-[0_0_30px_rgba(239,68,68,0.5)]' : 'bg-orange-500/80 border-orange-400 dark:border-orange-600 text-white shadow-[0_0_30px_rgba(249,115,22,0.5)]'
                                             }`}>
                                             <div className="w-3 h-3 bg-white rounded-full animate-ping"></div>
                                             <span className="font-bold text-lg tracking-wider uppercase drop-shadow-md">
@@ -168,32 +171,32 @@ export const Dashboard: React.FC<DashboardProps> = ({ apiKey }) => {
                             </div>
 
                             {/* Bottom Status Strip (Vision Panel) */}
-                            <div className="h-24 bg-white border-t border-slate-100 p-4 flex items-center justify-between z-10 relative">
+                            <div className="h-24 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 p-4 flex items-center justify-between z-10 relative transition-colors duration-300">
                                 <div>
-                                    <p className="text-xs text-slate-400 font-bold uppercase mb-1 tracking-[0.2em]">DMS Scanner</p>
+                                    <p className="text-xs text-slate-400 dark:text-slate-500 font-bold uppercase mb-1 tracking-[0.2em]">DMS Scanner</p>
                                     <div className="flex items-center gap-3">
                                         <div className="relative">
                                             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse relative z-10"></div>
                                             <div className="absolute inset-0 bg-emerald-500 blur-sm animate-pulse"></div>
                                         </div>
-                                        <span className="text-sm text-slate-700 font-bold tracking-wide">AI ACTIVE</span>
+                                        <span className="text-sm text-slate-700 dark:text-slate-300 font-bold tracking-wide">AI ACTIVE</span>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-6">
                                     {/* Speed HUD (Simulation) */}
                                     <div className="flex flex-col items-end mr-4">
-                                        <div className="text-3xl font-black text-slate-800 italic tracking-tighter">
-                                            72 <span className="text-sm font-normal text-slate-400 not-italic">km/h</span>
+                                        <div className="text-3xl font-black text-slate-800 dark:text-slate-200 italic tracking-tighter">
+                                            72 <span className="text-sm font-normal text-slate-400 dark:text-slate-500 not-italic">km/h</span>
                                         </div>
-                                        <div className="text-[10px] text-slate-500 font-mono">SPEED</div>
+                                        <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">SPEED</div>
                                     </div>
 
-                                    <div className="w-px h-10 bg-slate-200"></div>
+                                    <div className="w-px h-10 bg-slate-200 dark:bg-slate-700 transition-colors duration-300"></div>
 
                                     <VoiceAssistant apiKey={apiKey} />
 
-                                    <button className="relative group w-16 h-16 rounded-2xl flex flex-col items-center justify-center transition-all duration-300 shadow-sm bg-red-50 text-red-600 hover:bg-red-500 hover:text-white active:scale-95 overflow-hidden">
-                                        <div className="absolute inset-0 bg-red-500/10 animate-pulse group-hover:animate-none"></div>
+                                    <button className="relative group w-16 h-16 rounded-2xl flex flex-col items-center justify-center transition-all duration-300 shadow-sm bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-500 hover:bg-red-500 dark:hover:bg-red-600 hover:text-white dark:hover:text-white active:scale-95 overflow-hidden">
+                                        <div className="absolute inset-0 bg-red-500/10 dark:bg-red-500/20 animate-pulse group-hover:animate-none"></div>
                                         <span className="text-2xl font-black z-10 transition-colors">SOS</span>
                                     </button>
                                 </div>
@@ -202,9 +205,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ apiKey }) => {
                         </div>
 
                         {/* Right Panel: Map & Navigation */}
-                        <div className="w-1/2 relative rounded-[2rem] overflow-hidden bg-white h-full min-h-[300px] border border-slate-100 shadow-sm transition-all duration-500 group">
+                        <div className="w-1/2 relative rounded-[2rem] overflow-hidden bg-white dark:bg-slate-900 h-full min-h-[300px] border border-slate-100 dark:border-slate-800 shadow-sm transition-all duration-500 group">
                             {/* Glowing corner effects */}
-                            <div className="absolute top-0 right-0 w-20 h-20 bg-emerald-500/5 blur-xl rounded-full translate-x-10 -translate-y-10 group-hover:bg-emerald-500/10 transition-all"></div>
+                            <div className="absolute top-0 right-0 w-20 h-20 bg-emerald-500/5 dark:bg-emerald-500/10 blur-xl rounded-full translate-x-10 -translate-y-10 group-hover:bg-emerald-500/10 dark:group-hover:bg-emerald-500/20 transition-all"></div>
 
                             <MapPanel status={status} onEditContact={() => setCurrentView('settings')} />
                         </div>

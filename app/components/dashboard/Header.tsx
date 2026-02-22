@@ -30,18 +30,18 @@ export const Header: React.FC<HeaderProps> = ({ status }) => {
     };
 
     return (
-        <div className="h-20 border-b border-slate-100 bg-white/80 backdrop-blur-xl flex items-center justify-between px-6 z-10">
+        <div className="h-20 border-b border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl flex items-center justify-between px-6 z-10 transition-colors duration-300">
             <div className={`flex items-center gap-3 px-4 py-2 rounded-xl border ${getStatusColor()} transition-colors duration-300 shadow-sm`}>
                 <AlertCircle className="w-5 h-5" />
                 <span className="font-medium tracking-wide">Status Risiko: <span className="font-bold">{getStatusText()}</span></span>
             </div>
 
             <div className="flex gap-4">
-                <div className="bg-slate-50 px-4 py-2 rounded-full text-sm text-slate-600 font-mono border border-slate-200 shadow-sm flex items-center gap-2">
+                <div className="bg-slate-50 dark:bg-slate-800 px-4 py-2 rounded-full text-sm text-slate-600 dark:text-slate-300 font-mono border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-2 transition-colors duration-300">
                     <MapPin className="w-4 h-4 text-orange-500" />
                     Jakarta, Indonesia
                 </div>
-                <div className="bg-slate-50 px-4 py-2 rounded-full text-sm text-slate-600 font-mono border border-slate-200 shadow-sm">
+                <div className="bg-slate-50 dark:bg-slate-800 px-4 py-2 rounded-full text-sm text-slate-600 dark:text-slate-300 font-mono border border-slate-200 dark:border-slate-700 shadow-sm transition-colors duration-300">
                     {new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
                 </div>
             </div>

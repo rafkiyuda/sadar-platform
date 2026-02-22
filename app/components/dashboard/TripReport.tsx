@@ -91,22 +91,22 @@ export const TripReport: React.FC = () => {
     ];
 
     return (
-        <div className="flex-1 p-8 overflow-y-auto bg-[#fafaf9] font-sans text-slate-800 animate-in fade-in duration-700">
+        <div className="flex-1 p-8 overflow-y-auto bg-[#fafaf9] dark:bg-slate-950 font-sans text-slate-800 dark:text-slate-200 animate-in fade-in duration-700 transition-colors">
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
                 <div>
-                    <h2 className="text-3xl font-bold mb-2 tracking-tight" style={{ color: '#325a6c' }}>
+                    <h2 className="text-3xl font-bold mb-2 tracking-tight dark:text-orange-400 transition-colors" style={{ color: '#325a6c' }}>
                         Dashboard Monitoring Pengemudi
                     </h2>
-                    <p className="text-slate-500 font-medium tracking-wide">Analisis Kinerja & Keselamatan Armada Real-time</p>
+                    <p className="text-slate-500 dark:text-slate-400 font-medium tracking-wide">Analisis Kinerja & Keselamatan Armada Real-time</p>
                 </div>
 
                 <div className="flex items-center gap-4">
                     <div className="text-right">
-                        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Terakhir Update</span>
-                        <div className="text-xl font-mono font-bold" style={{ color: '#325a6c' }}>18:32:05</div>
+                        <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Terakhir Update</span>
+                        <div className="text-xl font-mono font-bold dark:text-orange-300 transition-colors" style={{ color: '#325a6c' }}>18:32:05</div>
                     </div>
-                    <button className="relative group p-3 rounded-2xl text-white transition-all active:scale-95" style={{ backgroundColor: '#325a6c' }}>
+                    <button className="relative group p-3 rounded-2xl text-white transition-all active:scale-95 bg-[#325a6c] dark:bg-[#325a6c]/80 dark:hover:bg-[#325a6c]">
                         <div className="absolute inset-0 bg-white/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         <Activity className="w-6 h-6 animate-pulse" />
                     </button>
@@ -117,28 +117,28 @@ export const TripReport: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5 mb-8">
                 {cards.map((card, idx) => (
                     <div key={idx}
-                        className="bg-white rounded-[2rem] p-6 border border-slate-100 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 flex flex-col justify-between h-[180px] shadow-sm group animate-in slide-in-from-bottom-4"
+                        className="bg-white dark:bg-slate-900/60 backdrop-blur-sm rounded-[2rem] p-6 border border-slate-100 dark:border-slate-800 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-slate-800/50 transition-all duration-300 flex flex-col justify-between h-[180px] shadow-sm group animate-in slide-in-from-bottom-4"
                         style={{ animationDelay: `${idx * 100}ms`, animationFillMode: 'both' }}
                     >
                         <div className="flex justify-between items-start mb-2">
-                            <span className="text-slate-500 text-[10px] font-bold uppercase tracking-wider leading-relaxed w-2/3">
+                            <span className="text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wider leading-relaxed w-2/3">
                                 {card.label}
                             </span>
                             <div className={`p-3 rounded-2xl ${card.iconBg} shadow-sm group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 relative`}>
-                                <div className="absolute inset-0 bg-white/30 rounded-2xl blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <div className="absolute inset-0 bg-white/30 dark:bg-white/10 rounded-2xl blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
                                 <card.icon className={`relative z-10 w-5 h-5 ${card.iconColor}`} />
                             </div>
                         </div>
 
                         <div>
                             <div className="flex items-baseline gap-1.5 mb-2">
-                                <span className="text-3xl font-extrabold tracking-tight" style={{ color: '#325a6c' }}>
+                                <span className="text-3xl font-extrabold tracking-tight dark:text-slate-100 transition-colors" style={{ color: '#325a6c' }}>
                                     {card.value}
                                 </span>
-                                <span className="text-xs text-slate-500 font-bold">{card.unit}</span>
+                                <span className="text-xs text-slate-500 dark:text-slate-400 font-bold">{card.unit}</span>
                             </div>
 
-                            <div className={`flex items-center gap-1.5 text-[10px] font-bold ${card.trendUp ? 'text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full w-fit border border-emerald-100' : 'text-orange-600 bg-orange-50 px-2.5 py-1 rounded-full w-fit border border-orange-100'}`}>
+                            <div className={`flex items-center gap-1.5 text-[10px] font-bold ${card.trendUp ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 px-2.5 py-1 rounded-full w-fit border border-emerald-100 dark:border-emerald-500/20' : 'text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/10 px-2.5 py-1 rounded-full w-fit border border-orange-100 dark:border-orange-500/20'}`}>
                                 {card.trendUp ? <ArrowUpRight className="w-3 h-3 animate-bounce" style={{ animationDuration: '2s' }} /> : <ArrowDownRight className="w-3 h-3" />}
                                 <span>{card.trend}</span>
                                 <span className="font-medium ml-0.5">{card.trendLabel}</span>
@@ -152,34 +152,34 @@ export const TripReport: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in slide-in-from-bottom-4" style={{ animationDelay: '600ms', animationFillMode: 'both' }}>
 
                 {/* Left: Trend Graph */}
-                <div className="lg:col-span-2 bg-white rounded-[2rem] border border-slate-100 p-8 flex flex-col shadow-sm relative overflow-hidden">
+                <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-100 dark:border-slate-800 p-8 flex flex-col shadow-sm relative overflow-hidden transition-colors">
                     {/* Background subtle decoration */}
-                    <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-slate-50 blur-3xl opacity-50 pointer-events-none"></div>
+                    <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-slate-50 dark:bg-slate-800 blur-3xl opacity-50 pointer-events-none transition-colors"></div>
 
                     <div className="flex justify-between items-center mb-8 relative z-10">
                         <div className="flex items-center gap-3">
-                            <div className="p-3 rounded-2xl" style={{ backgroundColor: '#325a6c15' }}>
-                                <TrendingUp className="w-6 h-6" style={{ color: '#325a6c' }} />
+                            <div className="p-3 rounded-2xl bg-[#325a6c15] dark:bg-orange-500/10">
+                                <TrendingUp className="w-6 h-6 text-[#325a6c] dark:text-orange-400" />
                             </div>
                             <div>
-                                <h3 className="font-bold text-lg" style={{ color: '#325a6c' }}>Tren Keselamatan & Efisiensi</h3>
-                                <p className="text-xs text-slate-500">Analisis 30 Hari Terakhir</p>
+                                <h3 className="font-bold text-lg text-[#325a6c] dark:text-slate-100">Tren Keselamatan & Efisiensi</h3>
+                                <p className="text-xs text-slate-500 dark:text-slate-400">Analisis 30 Hari Terakhir</p>
                             </div>
                         </div>
-                        <button className="flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-100 transition shadow-sm">
+                        <button className="flex items-center gap-2 px-4 py-2 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition shadow-sm">
                             <Calendar className="w-4 h-4" />
                             30 Hari
                         </button>
                     </div>
 
                     {/* Filter Tabs */}
-                    <div className="flex flex-wrap gap-2 mb-8 relative z-10">
+                    <div className="flex flex-wrap gap-2 mb-8 relative z-10 bg-transparent">
                         {['Skor Safety', 'Jarak (km)', 'Konsumsi BBM', 'Alert Kantuk'].map((tab, i) => (
                             <button key={tab} className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all border ${i === 0
-                                ? 'text-white shadow-md'
-                                : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50 hover:text-slate-800'
+                                ? 'text-white border-[#2b4d5c] bg-[#325a6c] dark:bg-orange-600 dark:border-orange-500 shadow-md'
+                                : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-200'
                                 }`}
-                                style={i === 0 ? { backgroundColor: '#325a6c', borderColor: '#2b4d5c' } : {}}>
+                            >
                                 {tab}
                             </button>
                         ))}
@@ -283,33 +283,33 @@ export const TripReport: React.FC = () => {
                 </div>
 
                 {/* Right: Map / Events */}
-                <div className="bg-white rounded-[2rem] border border-slate-100 p-6 flex flex-col shadow-sm relative overflow-hidden" style={{ animationDelay: '1000ms', animationFillMode: 'both' }}>
+                <div className="bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-100 dark:border-slate-800 p-6 flex flex-col shadow-sm relative overflow-hidden transition-colors" style={{ animationDelay: '1000ms', animationFillMode: 'both' }}>
                     <div className="flex justify-between items-center mb-6 relative z-10">
                         <div className="flex items-center gap-3">
-                            <div className="p-3 rounded-2xl" style={{ backgroundColor: '#325a6c15' }}>
-                                <MapPin className="w-5 h-5" style={{ color: '#325a6c' }} />
+                            <div className="p-3 rounded-2xl bg-[#325a6c15] dark:bg-orange-500/10">
+                                <MapPin className="w-5 h-5 text-[#325a6c] dark:text-orange-400" />
                             </div>
-                            <h3 className="font-bold text-lg" style={{ color: '#325a6c' }}>Lokasi Armada</h3>
+                            <h3 className="font-bold text-lg text-[#325a6c] dark:text-slate-100">Lokasi Armada</h3>
                         </div>
                         <div className="flex gap-2 text-[10px] font-bold">
-                            <span className="flex items-center gap-1.5 px-2 py-1 bg-emerald-50 rounded-lg text-emerald-600 border border-emerald-100"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div> Aktif</span>
-                            <span className="flex items-center gap-1.5 px-2 py-1 bg-orange-50 rounded-lg text-orange-600 border border-orange-100"><div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></div> Alert</span>
+                            <span className="flex items-center gap-1.5 px-2 py-1 bg-emerald-50 dark:bg-emerald-500/10 rounded-lg text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-500/20"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div> Aktif</span>
+                            <span className="flex items-center gap-1.5 px-2 py-1 bg-orange-50 dark:bg-orange-500/10 rounded-lg text-orange-600 dark:text-orange-400 border border-orange-100 dark:border-orange-500/20"><div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></div> Alert</span>
                         </div>
                     </div>
 
                     {/* Mock Map Representation (Grid) */}
-                    <div className="flex-1 bg-slate-50 rounded-2xl relative overflow-hidden bg-[linear-gradient(rgba(0,0,0,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.03)_1px,transparent_1px)] bg-[size:24px_24px] shadow-inner animate-in fade-in" style={{ animationDelay: '1200ms', animationDuration: '1s' }}>
+                    <div className="flex-1 bg-slate-50 dark:bg-slate-950 rounded-2xl relative overflow-hidden bg-[linear-gradient(rgba(0,0,0,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.03)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:24px_24px] shadow-inner animate-in fade-in transition-colors" style={{ animationDelay: '1200ms', animationDuration: '1s' }}>
 
                         {/* Interactive overlay element */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-white/60 to-transparent pointer-events-none z-0"></div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-white/60 dark:from-slate-950/60 to-transparent pointer-events-none z-0"></div>
 
                         {/* Jakarta Node */}
                         <div className="absolute top-1/3 left-1/4 flex flex-col items-center gap-2 group cursor-pointer">
                             <div className="relative">
-                                <div className="w-4 h-4 rounded-full bg-emerald-500 shadow-sm z-10 relative border-2 border-white"></div>
+                                <div className="w-4 h-4 rounded-full bg-emerald-500 shadow-sm z-10 relative border-2 border-white dark:border-slate-800"></div>
                                 <div className="absolute inset-0 bg-emerald-500/30 animate-ping rounded-full"></div>
                             </div>
-                            <div className="px-3 py-1 bg-white rounded-lg border border-slate-200 text-[10px] font-bold text-slate-700 shadow-sm -mt-1">
+                            <div className="px-3 py-1 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 text-[10px] font-bold text-slate-700 dark:text-slate-300 shadow-sm -mt-1 transition-colors">
                                 Unit A-01 (JKT)
                             </div>
                         </div>
@@ -317,49 +317,49 @@ export const TripReport: React.FC = () => {
                         {/* Bekasi Node */}
                         <div className="absolute top-1/2 left-[70%] flex flex-col items-center gap-2 group cursor-pointer">
                             <div className="relative">
-                                <div className="w-4 h-4 rounded-full bg-orange-500 shadow-sm z-10 relative border-2 border-white"></div>
+                                <div className="w-4 h-4 rounded-full bg-orange-500 shadow-sm z-10 relative border-2 border-white dark:border-slate-800"></div>
                                 <div className="absolute inset-0 bg-orange-500/30 animate-ping rounded-full"></div>
                             </div>
-                            <div className="px-3 py-1 bg-white rounded-lg border border-orange-200 text-[10px] font-bold text-slate-700 shadow-sm -mt-1 flex flex-col items-center">
+                            <div className="px-3 py-1 bg-white dark:bg-slate-800 rounded-lg border border-orange-200 dark:border-orange-500/30 text-[10px] font-bold text-slate-700 dark:text-slate-300 shadow-sm -mt-1 flex flex-col items-center transition-colors">
                                 <span>Unit B-03 (BKS)</span>
-                                <span className="text-[8px] text-orange-500 font-bold uppercase tracking-wide">Drowsy Alert</span>
+                                <span className="text-[8px] text-orange-500 dark:text-orange-400 font-bold uppercase tracking-wide">Drowsy Alert</span>
                             </div>
                         </div>
 
                         {/* Tangerang Node */}
                         <div className="absolute bottom-[40%] left-[15%] flex flex-col items-center gap-2 group cursor-pointer">
-                            <div className="w-3 h-3 rounded-full bg-emerald-500 shadow-sm border-2 border-white"></div>
-                            <div className="px-2 py-1 bg-white rounded border border-slate-200 text-[9px] text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="w-3 h-3 rounded-full bg-emerald-500 shadow-sm border-2 border-white dark:border-slate-800"></div>
+                            <div className="px-2 py-1 bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 text-[9px] text-slate-500 dark:text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">
                                 Unit D-04 (TNG)
                             </div>
                         </div>
 
                         {/* Depok Node */}
                         <div className="absolute bottom-[30%] left-[50%] flex flex-col items-center gap-2 group cursor-pointer">
-                            <div className="w-3 h-3 rounded-full bg-emerald-500 shadow-sm border-2 border-white"></div>
-                            <div className="px-2 py-1 bg-white rounded border border-slate-200 text-[9px] text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="w-3 h-3 rounded-full bg-emerald-500 shadow-sm border-2 border-white dark:border-slate-800"></div>
+                            <div className="px-2 py-1 bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 text-[9px] text-slate-500 dark:text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">
                                 Unit C-05 (DPK)
                             </div>
                         </div>
 
                         {/* Info Box Overlay */}
-                        <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur border border-slate-100 p-4 rounded-2xl shadow-md w-40">
-                            <div className="flex items-center gap-2 mb-3 pb-2 border-b border-slate-100">
+                        <div className="absolute bottom-4 left-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-slate-100 dark:border-slate-800 p-4 rounded-2xl shadow-md w-40 transition-colors">
+                            <div className="flex items-center gap-2 mb-3 pb-2 border-b border-slate-100 dark:border-slate-800">
                                 <Activity className="w-4 h-4 text-orange-500" />
-                                <span className="text-xs font-bold text-slate-700">Area Liputan</span>
+                                <span className="text-xs font-bold text-slate-700 dark:text-slate-300">Area Liputan</span>
                             </div>
                             <div className="space-y-2">
-                                <div className="flex justify-between text-[10px] text-slate-500">
+                                <div className="flex justify-between text-[10px] text-slate-500 dark:text-slate-400">
                                     <span>Total Unit</span>
-                                    <span className="text-slate-800 font-bold">12</span>
+                                    <span className="text-slate-800 dark:text-slate-200 font-bold">12</span>
                                 </div>
-                                <div className="flex justify-between text-[10px] text-slate-500">
+                                <div className="flex justify-between text-[10px] text-slate-500 dark:text-slate-400">
                                     <span>Online</span>
-                                    <span className="text-emerald-600 font-bold">9</span>
+                                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">9</span>
                                 </div>
-                                <div className="flex justify-between text-[10px] text-slate-500">
+                                <div className="flex justify-between text-[10px] text-slate-500 dark:text-slate-400">
                                     <span>Peringatan</span>
-                                    <span className="text-orange-600 font-bold">2</span>
+                                    <span className="text-orange-600 dark:text-orange-400 font-bold">2</span>
                                 </div>
                             </div>
                         </div>

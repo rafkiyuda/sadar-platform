@@ -42,7 +42,7 @@ export const MapPanel: React.FC<MapPanelProps> = ({ status, onEditContact }) => 
         : "";
 
     return (
-        <div className="h-full w-full relative bg-slate-50 rounded-[2rem] overflow-hidden group">
+        <div className="h-full w-full relative bg-slate-50 dark:bg-slate-900 rounded-[2rem] overflow-hidden group transition-colors duration-300">
             {/* Map Background */}
             {location ? (
                 <iframe
@@ -53,47 +53,48 @@ export const MapPanel: React.FC<MapPanelProps> = ({ status, onEditContact }) => 
                     allowFullScreen
                     referrerPolicy="no-referrer-when-downgrade"
                     src={mapSrc}
+                    className="dark:opacity-80 transition-opacity duration-300"
                 ></iframe>
             ) : (
-                <div className="h-full w-full flex items-center justify-center bg-slate-100">
+                <div className="h-full w-full flex items-center justify-center bg-slate-100 dark:bg-slate-800 transition-colors duration-300">
                     <div className="flex flex-col items-center animate-pulse">
-                        <MapPin className="w-10 h-10 text-orange-300 mb-2" />
-                        <span className="text-slate-500 font-mono text-sm">Locating Vehicle...</span>
+                        <MapPin className="w-10 h-10 text-orange-300 dark:text-orange-500 mb-2" />
+                        <span className="text-slate-500 dark:text-slate-400 font-mono text-sm">Locating Vehicle...</span>
                     </div>
                 </div>
             )}
 
             {/* Gradient Overlay for text readability (Light Mode) */}
-            <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-white/80 to-transparent pointer-events-none"></div>
+            <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-white/80 dark:from-slate-950/90 to-transparent pointer-events-none transition-colors duration-300"></div>
 
             {/* Top Controls */}
             <div className="absolute top-4 right-4 flex flex-col gap-2">
-                <button className="bg-white/90 p-3 rounded-2xl text-slate-700 shadow-sm backdrop-blur-sm border border-slate-100 hover:bg-orange-50 hover:text-orange-600 transition group/btn">
+                <button className="bg-white/90 dark:bg-slate-800/90 p-3 rounded-2xl text-slate-700 dark:text-slate-300 shadow-sm backdrop-blur-sm border border-slate-100 dark:border-slate-700 hover:bg-orange-50 dark:hover:bg-orange-500/20 hover:text-orange-600 dark:hover:text-orange-400 transition group/btn">
                     <Navigation className="w-6 h-6 group-hover/btn:rotate-45 transition-transform" />
                 </button>
-                <button className="bg-white/90 p-3 rounded-2xl text-slate-700 shadow-sm backdrop-blur-sm border border-slate-100 hover:bg-emerald-50 hover:text-emerald-600 transition">
+                <button className="bg-white/90 dark:bg-slate-800/90 p-3 rounded-2xl text-slate-700 dark:text-slate-300 shadow-sm backdrop-blur-sm border border-slate-100 dark:border-slate-700 hover:bg-emerald-50 dark:hover:bg-emerald-500/20 hover:text-emerald-600 dark:hover:text-emerald-400 transition">
                     <Locate className="w-6 h-6" />
                 </button>
             </div>
 
             {/* Recommendation UI (Bottom Overlay) */}
             <div className="absolute bottom-6 left-6 right-6 flex flex-col md:flex-row gap-4 items-end z-10">
-                <div className="flex-1 bg-white/95 backdrop-blur-xl text-slate-800 p-4 rounded-3xl border border-slate-100 flex items-center justify-between shadow-lg">
+                <div className="flex-1 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl text-slate-800 dark:text-slate-100 p-4 rounded-3xl border border-slate-100 dark:border-slate-800 flex items-center justify-between shadow-lg transition-colors duration-300">
                     <div className="flex items-center gap-4">
-                        <div className="bg-emerald-50 p-3 rounded-2xl relative overflow-hidden">
-                            <div className="absolute inset-0 bg-emerald-100 animate-ping rounded-2xl opacity-50"></div>
-                            <Coffee className="w-6 h-6 text-emerald-600 relative z-10" />
+                        <div className="bg-emerald-50 dark:bg-emerald-500/10 p-3 rounded-2xl relative overflow-hidden">
+                            <div className="absolute inset-0 bg-emerald-100 dark:bg-emerald-500/20 animate-ping rounded-2xl opacity-50"></div>
+                            <Coffee className="w-6 h-6 text-emerald-600 dark:text-emerald-400 relative z-10" />
                         </div>
                         <div>
-                            <p className="text-slate-500 text-[10px] uppercase tracking-wider font-bold mb-0.5">Rekomendasi Istirahat</p>
-                            <h4 className="text-lg font-bold text-slate-800 leading-tight">{recommendation.name}</h4>
-                            <p className="text-xs text-emerald-600 font-bold flex items-center gap-1">
+                            <p className="text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-wider font-bold mb-0.5">Rekomendasi Istirahat</p>
+                            <h4 className="text-lg font-bold text-slate-800 dark:text-slate-100 leading-tight">{recommendation.name}</h4>
+                            <p className="text-xs text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
                                 <Navigation className="w-3 h-3" />
                                 {recommendation.distance}
                             </p>
                         </div>
                     </div>
-                    <button className="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-3 rounded-2xl font-bold text-sm transition shadow-md shadow-emerald-600/20 active:scale-95">
+                    <button className="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-3 rounded-2xl font-bold text-sm transition shadow-md shadow-emerald-600/20 dark:shadow-emerald-900/40 active:scale-95">
                         NAVIGASI
                     </button>
                 </div>
@@ -106,7 +107,7 @@ export const MapPanel: React.FC<MapPanelProps> = ({ status, onEditContact }) => 
             {/* Drowsiness Alert Overlay */}
             {(status === 'DROWSY' || status === 'CRITICAL') && (
                 <div className="absolute top-4 left-4 right-16 z-20">
-                    <div className="bg-red-500/90 text-white px-4 py-3 rounded-xl shadow-[0_0_30px_rgba(239,68,68,0.4)] border border-red-400 backdrop-blur-sm animate-pulse flex items-center gap-3">
+                    <div className="bg-red-500/90 text-white px-4 py-3 rounded-xl shadow-[0_0_30px_rgba(239,68,68,0.4)] border border-red-400 dark:border-red-600 backdrop-blur-sm animate-pulse flex items-center gap-3">
                         <div className="bg-white p-1.5 rounded-full">
                             <MapPin className="w-4 h-4 text-red-600" />
                         </div>
