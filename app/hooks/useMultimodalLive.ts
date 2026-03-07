@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { base64ToArrayBuffer, arrayBufferToBase64, floatTo16BitPCM, downsampleTo16kHz } from '@/app/lib/audio-utils';
+import { useDriverStore } from '@/app/lib/store/useDriverStore';
 
 type LiveStatus = 'disconnected' | 'connecting' | 'connected' | 'error';
 
@@ -23,17 +24,41 @@ export function useMultimodalLive(apiKeyParam: string = "", location: string | n
     const isPlayingRef = useRef(false);
     const nextStartTimeRef = useRef(0);
 
+    const {
+        aiMood,
+        setAiMood,
+        alarmSettings,
+        setAlarmSettings,
+        cameraMode,
+        setCameraMode
+    } = useDriverStore();
+
     // Dynamic Setup Message with System Instruction
     // POC MODE: Hardcoded to Condet
     const locationContext = "Condet, Jakarta Timur";
 
-    const systemInstruction = `You are a helpful driving assistant. 
+    const systemInstruction = `You are a helpful driving assistant named SADAR. 
     CURRENT LOCATION: ${locationContext}.
+    CURRENT AI MOOD: ${aiMood}.
+    CURRENT ALARM SETTINGS: Enabled: ${alarmSettings.enabled}, Time: ${alarmSettings.time || 'Not set'}, Condition: ${alarmSettings.condition || 'None'}.
     
     INSTRUCTIONS:
     1. Always assume the user is in ${locationContext}, regardless of valid GPS data.
     2. If asked for recommendations (cafes, rest areas), suggest popular places in Condet like "Kopi Nako Condet", "Renjana Coffee", or "Teras Rumah Nenek" with confidence.
-    3. Keep responses concise and focused on driving safety and comfort.`;
+    3. Keep responses concise and focused on driving safety and comfort.
+    4. Adhere to your CURRENT AI MOOD:
+       - friendly: Warm, conversational, and encouraging.
+       - formal: Polite, professional, and structured.
+       - alert: Direct, concise, and focused on immediate safety/actions.
+    5. You can help the user set an alarm or change your mood using the provided tools.
+    6. Answer in Indonesian unless requested otherwise.
+    
+    Kamu dapat membantu pengguna:
+    1. Mengubah gaya komunikasi kamu (set_ai_mood).
+    2. Mengatur alarm (set_alarm).
+    3. Mengubah tampilan kamera antara 'single' (hanya muka pengemudi) atau 'dual' (muka + jalan) melalui 'set_camera_mode'.
+    
+    Selalu jalankan tool jika pengguna memintanya.`;
 
     const setupMessage = React.useMemo(() => ({
         setup: {
@@ -46,7 +71,56 @@ export function useMultimodalLive(apiKeyParam: string = "", location: string | n
             },
             systemInstruction: {
                 parts: [{ text: systemInstruction }]
-            }
+            },
+            tools: [
+                {
+                    functionDeclarations: [
+                        {
+                            name: "set_ai_mood",
+                            description: "Changes the AI communication style mood.",
+                            parameters: {
+                                type: "OBJECT",
+                                properties: {
+                                    mood: {
+                                        type: "STRING",
+                                        enum: ["friendly", "formal", "alert"],
+                                        description: "The new mood for the AI."
+                                    }
+                                },
+                                required: ["mood"]
+                            }
+                        },
+                        {
+                            name: "set_alarm",
+                            description: "Sets or updates the alarm settings.",
+                            parameters: {
+                                type: "OBJECT",
+                                properties: {
+                                    enabled: { type: "BOOLEAN" },
+                                    time: { type: "STRING", description: "Format HH:mm" },
+                                    condition: { type: "STRING", description: "Condition to trigger the alarm" }
+                                },
+                                required: ["enabled"]
+                            }
+                        },
+                        {
+                            name: "set_camera_mode",
+                            description: "Ubah tampilan kamera antara mode 'single' atau 'dual'.",
+                            parameters: {
+                                type: "OBJECT",
+                                properties: {
+                                    mode: {
+                                        type: "STRING",
+                                        enum: ["single", "dual"],
+                                        description: "Mode kamera yang diinginkan."
+                                    }
+                                },
+                                required: ["mode"]
+                            }
+                        }
+                    ]
+                }
+            ]
         }
     }), [systemInstruction]);
 
@@ -94,7 +168,36 @@ export function useMultimodalLive(apiKeyParam: string = "", location: string | n
                         queueAudio(audioData);
                     }
 
-                    // Handle Tool Call (if any) - not implemented in basic PoC yet
+                    // Handle Tool Call
+                    if (response.serverContent?.modelTurn?.parts?.[0]?.functionCall) {
+                        const call = response.serverContent.modelTurn.parts[0].functionCall;
+                        console.log("AI Tool Call:", call.name, call.args);
+
+                        if (call.name === 'set_ai_mood') {
+                            const { mood } = call.args as { mood: 'friendly' | 'formal' | 'alert' };
+                            setAiMood(mood);
+                        } else if (call.name === 'set_alarm') {
+                            const { enabled, time, condition } = call.args as { enabled: boolean, time?: string, condition?: string };
+                            setAlarmSettings({ enabled, time, condition });
+                        } else if (call.name === 'set_camera_mode') {
+                            const { mode } = call.args as { mode: 'single' | 'dual' };
+                            setCameraMode(mode);
+                        }
+
+                        // Send Tool Response back to AI
+                        if (websocketRef.current && websocketRef.current.readyState === WebSocket.OPEN) {
+                            const toolResponse = {
+                                toolResponse: {
+                                    functionResponses: [{
+                                        name: call.name,
+                                        response: { output: { success: true } },
+                                        id: call.id
+                                    }]
+                                }
+                            };
+                            websocketRef.current.send(JSON.stringify(toolResponse));
+                        }
+                    }
                 } catch (e) {
                     console.error("Error parsing WS message", e);
                 }

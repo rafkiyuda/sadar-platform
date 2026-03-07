@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { DriverState, DriverStatus } from '@/app/types';
+import { DriverState, DriverStatus, AiMood, AlarmSetting, CameraMode } from '@/app/types';
 
 // Extend the interface locally if I can't access types.ts, OR I should request to see types.ts first.
 // Wait, I should update types.ts first to be safe.
@@ -22,6 +22,9 @@ export const useDriverStore = create<DriverState>()(
                 callDuration: 0,
             },
             aiSensitivity: 5, // Default sensitivity (1-10)
+            aiMood: 'friendly', // Default mood
+            alarmSettings: { enabled: false }, // Default alarm
+            cameraMode: 'dual', // Default camera mode
 
             setStatus: (status: DriverStatus) => set({ status }),
             setEAR: (ear: number) => set({ ear }),
@@ -31,6 +34,10 @@ export const useDriverStore = create<DriverState>()(
 
             triggerAlert: () => set({ lastAlertTimestamp: Date.now() }),
             setEmergencyContact: (contact: string) => set({ emergencyContact: contact }),
+
+            setAiMood: (mood: AiMood) => set({ aiMood: mood }),
+            setAlarmSettings: (settings: AlarmSetting) => set({ alarmSettings: settings }),
+            setCameraMode: (mode: CameraMode) => set({ cameraMode: mode }),
 
             incrementDistance: (amount: number) =>
                 set((state) => ({
@@ -66,7 +73,10 @@ export const useDriverStore = create<DriverState>()(
             name: 'sadar-storage', // unique name
             partialize: (state) => ({
                 emergencyContact: state.emergencyContact,
-                tripStats: state.tripStats // persist trip stats too
+                tripStats: state.tripStats, // persist trip stats too
+                aiMood: state.aiMood,
+                alarmSettings: state.alarmSettings,
+                cameraMode: state.cameraMode,
             }),
         }
     )

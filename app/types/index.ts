@@ -1,4 +1,12 @@
 export type DriverStatus = 'ALERT' | 'DROWSY' | 'CRITICAL' | 'NO_FACE';
+export type AiMood = 'friendly' | 'formal' | 'alert';
+export type CameraMode = 'single' | 'dual';
+
+export interface AlarmSetting {
+    enabled: boolean;
+    time?: string;
+    condition?: string;
+}
 
 export interface DrowsinessEvent {
     status: DriverStatus;
@@ -23,6 +31,11 @@ export interface DriverState {
     tripStats: TripStats; // New trip stats
     aiSensitivity: number; // Sensitivity from 1 (Strict) to 10 (Lenient)
 
+    // New Features
+    aiMood: AiMood;
+    alarmSettings: AlarmSetting;
+    cameraMode: CameraMode;
+
     setStatus: (status: DriverStatus) => void;
     setEAR: (ear: number) => void;
     setBaselineEar: (ear: number) => void;
@@ -36,5 +49,10 @@ export interface DriverState {
     incrementDrowsyCount: () => void;
     incrementCallDuration: (seconds: number) => void;
     resetTrip: () => void;
+
+    // New actions for Features
+    setAiMood: (mood: AiMood) => void;
+    setAlarmSettings: (settings: AlarmSetting) => void;
+    setCameraMode: (mode: CameraMode) => void;
 }
 

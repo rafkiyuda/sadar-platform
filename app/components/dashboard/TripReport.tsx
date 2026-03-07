@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
     Navigation,
     Clock,
@@ -14,9 +14,107 @@ import {
     Gauge
 } from 'lucide-react';
 
+// ── Per-tab chart data ──────────────────────────────────────────────────────
+interface TabData {
+    label: string;
+    unit: string;
+    description: string;
+    color: string;         // stroke colour
+    gradId: string;        // <linearGradient> id
+    gradStart: string;
+    yLabels: string[];
+    bars: number[];        // background bar heights %
+    dots: { cx: string; cy: string }[];
+    linePath: string;
+    areaPath: string;
+}
+
+const TAB_DATA: TabData[] = [
+    {
+        label: 'Skor Safety',
+        unit: '%',
+        description: 'Skor keselamatan berkendara 0-100',
+        color: '#325a6c',
+        gradId: 'gradSkor',
+        gradStart: '#325a6c',
+        yLabels: ['100', '75', '50', '25', '0'],
+        bars: [40, 70, 45, 90, 65, 80, 50, 95],
+        dots: [
+            { cx: '0%', cy: '83%' }, { cx: '14.28%', cy: '66%' },
+            { cx: '28.57%', cy: '40%' }, { cx: '42.85%', cy: '53%' },
+            { cx: '57.14%', cy: '26%' }, { cx: '71.42%', cy: '33%' },
+            { cx: '85.71%', cy: '13%' }, { cx: '100%', cy: '30%' },
+        ],
+        linePath: 'M0,250 Q60,180 120,200 T240,120 T360,160 T480,80 T600,100 T720,40 T840,90',
+        areaPath: 'M0,250 Q60,180 120,200 T240,120 T360,160 T480,80 T600,100 T720,40 T840,90 L840,300 L0,300 Z',
+    },
+    {
+        label: 'Jarak (km)',
+        unit: 'km',
+        description: 'Total jarak tempuh harian selama 30 hari',
+        color: '#6366f1',
+        gradId: 'gradJarak',
+        gradStart: '#6366f1',
+        yLabels: ['200', '150', '100', '50', '0'],
+        bars: [60, 50, 80, 55, 70, 45, 90, 65],
+        dots: [
+            { cx: '0%', cy: '55%' }, { cx: '14.28%', cy: '70%' },
+            { cx: '28.57%', cy: '25%' }, { cx: '42.85%', cy: '60%' },
+            { cx: '57.14%', cy: '40%' }, { cx: '71.42%', cy: '75%' },
+            { cx: '85.71%', cy: '18%' }, { cx: '100%', cy: '48%' },
+        ],
+        linePath: 'M0,165 Q60,210 120,75 T240,180 T360,120 T480,225 T600,55 T720,145 T840,180',
+        areaPath: 'M0,165 Q60,210 120,75 T240,180 T360,120 T480,225 T600,55 T720,145 T840,180 L840,300 L0,300 Z',
+    },
+    {
+        label: 'Konsumsi BBM',
+        unit: 'L',
+        description: 'Konsumsi bahan bakar harian (liter)',
+        color: '#f59e0b',
+        gradId: 'gradBBM',
+        gradStart: '#f59e0b',
+        yLabels: ['50L', '37L', '25L', '12L', '0L'],
+        bars: [70, 55, 65, 45, 80, 35, 60, 50],
+        dots: [
+            { cx: '0%', cy: '38%' }, { cx: '14.28%', cy: '55%' },
+            { cx: '28.57%', cy: '42%' }, { cx: '42.85%', cy: '70%' },
+            { cx: '57.14%', cy: '22%' }, { cx: '71.42%', cy: '80%' },
+            { cx: '85.71%', cy: '45%' }, { cx: '100%', cy: '58%' },
+        ],
+        linePath: 'M0,114 Q60,165 120,126 T240,210 T360,66 T480,240 T600,135 T720,174 T840,150',
+        areaPath: 'M0,114 Q60,165 120,126 T240,210 T360,66 T480,240 T600,135 T720,174 T840,150 L840,300 L0,300 Z',
+    },
+    {
+        label: 'Alert Kantuk',
+        unit: 'kejadian',
+        description: 'Jumlah kejadian tanda kantuk terdeteksi',
+        color: '#ef4444',
+        gradId: 'gradAlert',
+        gradStart: '#ef4444',
+        yLabels: ['10', '7', '5', '2', '0'],
+        bars: [20, 40, 15, 60, 30, 55, 10, 45],
+        dots: [
+            { cx: '0%', cy: '72%' }, { cx: '14.28%', cy: '44%' },
+            { cx: '28.57%', cy: '83%' }, { cx: '42.85%', cy: '22%' },
+            { cx: '57.14%', cy: '60%' }, { cx: '71.42%', cy: '28%' },
+            { cx: '85.71%', cy: '88%' }, { cx: '100%', cy: '50%' },
+        ],
+        linePath: 'M0,216 Q60,132 120,249 T240,66 T360,180 T480,84 T600,264 T720,90 T840,210',
+        areaPath: 'M0,216 Q60,132 120,249 T240,66 T360,180 T480,84 T600,264 T720,90 T840,210 L840,300 L0,300 Z',
+    },
+];
+
 export const TripReport: React.FC = () => {
-    // Dummy Data State (Static for now as requested)
     const [timeRange, setTimeRange] = useState('30 Days');
+    const [activeTab, setActiveTab] = useState(0);
+    const [chartKey, setChartKey] = useState(0); // force SVG re-animation on tab switch
+
+    const handleTabChange = useCallback((i: number) => {
+        setActiveTab(i);
+        setChartKey(k => k + 1);
+    }, []);
+
+    const tab = TAB_DATA[activeTab];
 
     // Card Data Configuration matching the SADAR context (Driving Safety)
     const cards = [
@@ -174,110 +272,102 @@ export const TripReport: React.FC = () => {
 
                     {/* Filter Tabs */}
                     <div className="flex flex-wrap gap-2 mb-8 relative z-10 bg-transparent">
-                        {['Skor Safety', 'Jarak (km)', 'Konsumsi BBM', 'Alert Kantuk'].map((tab, i) => (
-                            <button key={tab} className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all border ${i === 0
-                                ? 'text-white border-[#2b4d5c] bg-[#325a6c] dark:bg-orange-600 dark:border-orange-500 shadow-md'
-                                : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-200'
-                                }`}
+                        {TAB_DATA.map((t, i) => (
+                            <button
+                                key={t.label}
+                                onClick={() => handleTabChange(i)}
+                                className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all border ${i === activeTab
+                                        ? 'text-white shadow-md'
+                                        : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-200'
+                                    }`}
+                                style={i === activeTab ? { backgroundColor: t.color, borderColor: t.color } : {}}
                             >
-                                {tab}
+                                {t.label}
                             </button>
                         ))}
                     </div>
 
+                    {/* Chart description */}
+                    <p className="text-xs text-slate-400 dark:text-slate-500 mb-4 -mt-4 italic">{tab.description}</p>
+
                     {/* Rich Graph Area */}
-                    <div className="relative w-full h-[320px] border-l-2 border-b-2 border-slate-100 ml-2 mb-2 pr-4 pt-4 mt-auto rounded-bl-lg">
+                    <div key={chartKey} className="relative w-full h-[320px] border-l-2 border-b-2 border-slate-100 ml-2 mb-2 pr-4 pt-4 mt-auto rounded-bl-lg">
                         {/* Interactive Hover Gradient Background */}
                         <div className="absolute inset-0 bg-gradient-to-t from-[#325a6c]/5 to-transparent opacity-50"></div>
 
                         {/* Animated Grid Lines */}
                         {[0, 1, 2, 3, 4].map((i) => (
-                            <div key={`h-${i}`} className="absolute w-full border-t border-slate-200/60 transition-all duration-700 hover:border-[#325a6c]/20" style={{ top: `${i * 25}%`, left: 0 }}></div>
+                            <div key={`h-${i}`} className="absolute w-full border-t border-slate-200/60" style={{ top: `${i * 25}%`, left: 0 }}></div>
                         ))}
                         {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
                             <div key={`v-${i}`} className="absolute h-full border-r border-dashed border-slate-200/40" style={{ left: `${i * 14.28}%`, top: 0 }}></div>
                         ))}
 
-                        {/* Background Data Bars (Visual Filler) */}
+                        {/* Background Data Bars (per tab) */}
                         <div className="absolute inset-0 flex items-end justify-between px-4 opacity-10 pointer-events-none">
-                            {[40, 70, 45, 90, 65, 80, 50, 95].map((height, i) => (
-                                <div key={`bar-${i}`} className="w-12 bg-[#325a6c] rounded-t-lg animate-in slide-in-from-bottom-8" style={{ height: `${height}%`, animationDelay: `${i * 100}ms` }}></div>
+                            {tab.bars.map((height, i) => (
+                                <div
+                                    key={`bar-${i}`}
+                                    className="w-12 rounded-t-lg animate-in slide-in-from-bottom-8"
+                                    style={{ height: `${height}%`, animationDelay: `${i * 100}ms`, backgroundColor: tab.color }}
+                                />
                             ))}
                         </div>
 
-                        {/* SVG Path (Rich Area Chart) */}
+                        {/* SVG Path (Rich Area Chart) — re-mounts on chartKey change */}
                         <svg className="absolute inset-0 w-full h-full overflow-visible p-4 drop-shadow-sm">
                             <defs>
-                                <linearGradient id="chartGradientCustom" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stopColor="#325a6c" stopOpacity="0.8" />
-                                    <stop offset="50%" stopColor="#325a6c" stopOpacity="0.3" />
-                                    <stop offset="100%" stopColor="#325a6c" stopOpacity="0.05" />
-                                </linearGradient>
-                                <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
-                                    <stop offset="0%" stopColor="#2b4d5c" />
-                                    <stop offset="50%" stopColor="#4a86a0" />
-                                    <stop offset="100%" stopColor="#325a6c" />
+                                <linearGradient id={tab.gradId} x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stopColor={tab.gradStart} stopOpacity="0.7" />
+                                    <stop offset="50%" stopColor={tab.gradStart} stopOpacity="0.25" />
+                                    <stop offset="100%" stopColor={tab.gradStart} stopOpacity="0.03" />
                                 </linearGradient>
                             </defs>
 
                             {/* Area Fill */}
                             <path
-                                d="M0,250 Q60,180 120,200 T240,120 T360,160 T480,80 T600,100 T720,40 T840,90 L840,300 L0,300 Z"
-                                fill="url(#chartGradientCustom)"
+                                d={tab.areaPath}
+                                fill={`url(#${tab.gradId})`}
                                 className="animate-in fade-in"
-                                style={{ animationDuration: '1.5s', animationDelay: '0.4s' }}
+                                style={{ animationDuration: '1.2s', animationDelay: '0.2s' }}
                                 preserveAspectRatio="none"
                             />
 
-                            {/* Thick Gradient Stroke */}
+                            {/* Animated Stroke */}
                             <path
-                                d="M0,250 Q60,180 120,200 T240,120 T360,160 T480,80 T600,100 T720,40 T840,90"
+                                d={tab.linePath}
                                 fill="none"
-                                stroke="url(#lineGradient)"
-                                strokeWidth="5"
+                                stroke={tab.color}
+                                strokeWidth="4"
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
-                                strokeDasharray="1500"
-                                strokeDashoffset="1500"
+                                strokeDasharray="1800"
+                                strokeDashoffset="1800"
                                 style={{
-                                    animation: 'dash 2.5s cubic-bezier(0.4, 0, 0.2, 1) forwards',
-                                    animationDelay: '0.2s'
+                                    animation: 'dash 2.2s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+                                    animationDelay: '0.1s'
                                 }}
                                 preserveAspectRatio="none"
                             />
 
                             {/* Data Points / Dots */}
-                            {[
-                                { cx: "0%", cy: "83%" }, { cx: "14.28%", cy: "66%" }, { cx: "28.57%", cy: "40%" },
-                                { cx: "42.85%", cy: "53%" }, { cx: "57.14%", cy: "26%" }, { cx: "71.42%", cy: "33%" },
-                                { cx: "85.71%", cy: "13%" }, { cx: "100%", cy: "30%" }
-                            ].map((dot, idx) => (
-                                <g key={idx} className="group/dot cursor-pointer animate-in fade-in" style={{ animationDelay: `${1200 + (idx * 50)}ms`, animationFillMode: 'both' }}>
-                                    <circle cx={dot.cx} cy={dot.cy} r="6" fill="#ffffff" stroke="#325a6c" strokeWidth="3" className="group-hover/dot:r-8 group-hover/dot:stroke-[#4a86a0] transition-all duration-300 shadow-lg" />
-                                    <circle cx={dot.cx} cy={dot.cy} r="16" fill="transparent" stroke="#325a6c" strokeWidth="2" opacity="0.4" className="invisible group-hover/dot:visible animate-ping" style={{ animationDuration: '1.5s' }} />
+                            {tab.dots.map((dot, idx) => (
+                                <g key={idx} className="group/dot cursor-pointer animate-in fade-in" style={{ animationDelay: `${900 + idx * 60}ms`, animationFillMode: 'both' }}>
+                                    <circle cx={dot.cx} cy={dot.cy} r="6" fill="#ffffff" stroke={tab.color} strokeWidth="3" />
+                                    <circle cx={dot.cx} cy={dot.cy} r="16" fill="transparent" stroke={tab.color} strokeWidth="2" opacity="0.4" className="invisible group-hover/dot:visible animate-ping" style={{ animationDuration: '1.5s' }} />
                                 </g>
                             ))}
                         </svg>
 
-                        {/* Y-Axis Labels */}
+                        {/* Y-Axis Labels (per tab) */}
                         <div className="absolute -left-12 top-0 h-full flex flex-col justify-between text-[11px] font-bold text-slate-400 py-4">
-                            <span>100%</span>
-                            <span>75%</span>
-                            <span>50%</span>
-                            <span>25%</span>
-                            <span>0%</span>
+                            {tab.yLabels.map(l => <span key={l}>{l}</span>)}
                         </div>
 
                         {/* X-Axis Labels */}
                         <div className="absolute -bottom-8 left-0 w-full flex justify-between text-[11px] font-bold text-slate-400 px-4">
-                            <span>Sen</span>
-                            <span>Sel</span>
-                            <span>Rab</span>
-                            <span>Kam</span>
-                            <span>Jum</span>
-                            <span>Sab</span>
-                            <span>Min</span>
-                            <span>Hari Ini</span>
+                            <span>Sen</span><span>Sel</span><span>Rab</span><span>Kam</span>
+                            <span>Jum</span><span>Sab</span><span>Min</span><span>Hari Ini</span>
                         </div>
                     </div>
                 </div>

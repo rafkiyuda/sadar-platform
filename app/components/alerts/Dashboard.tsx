@@ -13,6 +13,7 @@ import { Sidebar } from '@/app/components/layout/Sidebar';
 
 import { Header } from '@/app/components/dashboard/Header';
 import { MapPanel } from '@/app/components/dashboard/MapPanel';
+import { LaporanBos } from '@/app/components/dashboard/LaporanBos';
 import { TripReport } from '@/app/components/dashboard/TripReport';
 import { SettingsView } from '@/app/components/settings/SettingsView';
 import { AIChat } from '@/app/components/chat/AIChat';
@@ -25,14 +26,15 @@ interface DashboardProps {
 export const Dashboard: React.FC<DashboardProps> = ({ apiKey }) => {
     const [hasStarted, setHasStarted] = useState(false);
     const [isCalibrating, setIsCalibrating] = useState(false);
-    const [currentView, setCurrentView] = useState<'dashboard' | 'report' | 'settings' | 'chat'>('dashboard');
+    const [currentView, setCurrentView] = useState<'dashboard' | 'report-driver' | 'report-bos' | 'settings' | 'chat'>('dashboard');
     const {
         status,
         isMonitoring,
         setIsMonitoring,
         tripStats,
         incrementDistance,
-        incrementDrowsyCount
+        incrementDrowsyCount,
+        cameraMode
     } = useDriverStore();
     const { initAudio } = useAlertSound();
 
@@ -150,47 +152,108 @@ export const Dashboard: React.FC<DashboardProps> = ({ apiKey }) => {
                 <Header status={status} />
 
                 {/* 4. Content Content - Conditional Rendering */}
-                {currentView === 'report' ? (
+                {currentView === 'report-driver' ? (
                     <TripReport />
+                ) : currentView === 'report-bos' ? (
+                    <LaporanBos />
                 ) : currentView === 'settings' ? (
                     <SettingsView />
                 ) : currentView === 'chat' ? (
                     <AIChat apiKey={apiKey} />
                 ) : (
                     <div className="flex-1 p-6 flex flex-row gap-6 h-[calc(100vh-5rem)] overflow-hidden">
-                        {/* Left Panel: Vision (Camera) */}
-                        <div className="w-1/2 relative rounded-[2rem] overflow-hidden bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col min-h-[300px] transition-all duration-500 group">
-                            {/* Glowing corner effects */}
-                            <div className="absolute top-0 left-0 w-20 h-20 bg-orange-500/5 dark:bg-orange-500/10 blur-xl rounded-full -translate-x-10 -translate-y-10 group-hover:bg-orange-500/10 dark:group-hover:bg-orange-500/20 transition-all"></div>
+                        {/* Left Panel: Camera Vision */}
+                        <div className="w-1/2 relative rounded-[2rem] overflow-hidden bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col min-h-[400px] transition-all duration-500 group">
 
-                            {/* Camera container */}
-                            <div className="flex-1 relative overflow-hidden">
-                                <VisionGuard />
-
-                                {/* Overlay for Critical Alert */}
-                                {(status === 'DROWSY' || status === 'CRITICAL') && (
-                                    <div className="absolute top-6 left-1/2 -translate-x-1/2 z-20 w-[90%]">
-                                        <div className={`p-4 rounded-xl border backdrop-blur-md shadow-lg flex items-center justify-center gap-3 animate-pulse ${status === 'CRITICAL' ? 'bg-red-500/80 border-red-400 dark:border-red-600 text-white shadow-[0_0_30px_rgba(239,68,68,0.5)]' : 'bg-orange-500/80 border-orange-400 dark:border-orange-600 text-white shadow-[0_0_30px_rgba(249,115,22,0.5)]'
-                                            }`}>
-                                            <div className="w-3 h-3 bg-white rounded-full animate-ping"></div>
-                                            <span className="font-bold text-lg tracking-wider uppercase drop-shadow-md">
-                                                {status === 'CRITICAL' ? 'MICROSLEEP DETECTED!' : 'DROWSINESS DETECTED'}
-                                            </span>
+                            {cameraMode === 'dual' ? (
+                                <>
+                                    {/* 1. TOP: Road View (Front Camera Dummy) */}
+                                    <div className="flex-1 relative overflow-hidden bg-slate-950 border-b border-white/5">
+                                        {/* Dummy Road Video Placeholder */}
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-slate-950/40 z-10"></div>
+                                            <video
+                                                src="/assets/videos/front_cam_dummy.mp4"
+                                                className="w-full h-full object-cover opacity-60"
+                                                autoPlay
+                                                loop
+                                                muted
+                                                playsInline
+                                                poster="https://images.unsplash.com/photo-1519003722824-194d4455a60c?q=80&w=2075&auto=format&fit=crop"
+                                            />
+                                            <div className="absolute top-4 left-6 z-20 flex items-center gap-2 bg-slate-900/60 backdrop-blur-sm px-3 py-1 rounded-full border border-white/10">
+                                                <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
+                                                <span className="text-[10px] font-bold text-blue-400 tracking-widest uppercase">FRONT CAM</span>
+                                            </div>
                                         </div>
                                     </div>
-                                )}
-                            </div>
+
+                                    {/* 2. BOTTOM: Driver View (DMS) */}
+                                    <div className="flex-1 relative overflow-hidden">
+                                        <VisionGuard />
+
+                                        {(status === 'DROWSY' || status === 'CRITICAL') && (
+                                            <div className="absolute top-6 left-1/2 -translate-x-1/2 z-20 w-[90%]">
+                                                <div className={`p-4 rounded-xl border backdrop-blur-md shadow-lg flex items-center justify-center gap-3 animate-pulse ${status === 'CRITICAL' ? 'bg-red-500/80 border-red-400 dark:border-red-600 text-white shadow-[0_0_30px_rgba(239,68,68,0.5)]' : 'bg-orange-500/80 border-orange-400 dark:border-orange-600 text-white shadow-[0_0_30px_rgba(249,115,22,0.5)]'
+                                                    }`}>
+                                                    <div className="w-3 h-3 bg-white rounded-full animate-ping"></div>
+                                                    <span className="font-bold text-lg tracking-wider uppercase drop-shadow-md">
+                                                        {status === 'CRITICAL' ? 'MICROSLEEP!' : 'DROWSINESS'}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        <div className="absolute bottom-4 left-6 z-20 flex items-center gap-2 bg-slate-900/60 backdrop-blur-sm px-3 py-1 rounded-full border border-white/10">
+                                            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                                            <span className="text-[10px] font-bold text-emerald-400 tracking-widest uppercase">DRIVER CAM</span>
+                                        </div>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="flex-1 relative overflow-hidden bg-slate-950">
+                                    <VisionGuard />
+
+                                    {(status === 'DROWSY' || status === 'CRITICAL') && (
+                                        <div className="absolute top-10 left-1/2 -translate-x-1/2 z-20 w-[90%] font-sans">
+                                            <div className={`p-6 rounded-2xl border backdrop-blur-md shadow-2xl flex items-center justify-center gap-4 animate-out zoom-in-95 duration-300 ${status === 'CRITICAL' ? 'bg-red-600/90 border-red-400 text-white shadow-red-500/50' : 'bg-orange-500/90 border-orange-400 text-white shadow-orange-500/50'
+                                                }`}>
+                                                <div className="w-4 h-4 bg-white rounded-full animate-ping"></div>
+                                                <div className="flex flex-col items-center">
+                                                    <span className="font-black text-2xl tracking-tighter uppercase">
+                                                        {status === 'CRITICAL' ? 'MICROSLEEP ALERT!' : 'DROWSINESS ALERT'}
+                                                    </span>
+                                                    <span className="text-xs font-bold opacity-80 uppercase tracking-widest mt-1">SISTEM SADAR AKTIF</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <div className="absolute bottom-6 left-8 z-20 flex items-center gap-3 bg-slate-900/80 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/10 shadow-2xl">
+                                        <div className="relative">
+                                            <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse relative z-10"></div>
+                                            <div className="absolute inset-0 bg-emerald-500 blur-md animate-pulse"></div>
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] font-black text-slate-400 tracking-[0.2em] uppercase leading-none mb-1">Status</span>
+                                            <span className="text-xs font-bold text-emerald-400 tracking-wider uppercase leading-none">DRIVER MONITORING ACTIVE</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
 
                             {/* Bottom Status Strip (Vision Panel) */}
                             <div className="h-24 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 p-4 flex items-center justify-between z-10 relative transition-colors duration-300">
                                 <div>
-                                    <p className="text-xs text-slate-400 dark:text-slate-500 font-bold uppercase mb-1 tracking-[0.2em]">DMS Scanner</p>
+                                    <p className="text-xs text-slate-400 dark:text-slate-500 font-bold uppercase mb-1 tracking-[0.2em]">
+                                        {cameraMode === 'dual' ? 'SADAR Dual-Vision' : 'SADAR DMS-Only'}
+                                    </p>
                                     <div className="flex items-center gap-3">
                                         <div className="relative">
-                                            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse relative z-10"></div>
-                                            <div className="absolute inset-0 bg-emerald-500 blur-sm animate-pulse"></div>
+                                            <div className={`w-2 h-2 rounded-full ${cameraMode === 'dual' ? 'bg-blue-500' : 'bg-emerald-500'} animate-pulse relative z-10`}></div>
+                                            <div className={`absolute inset-0 ${cameraMode === 'dual' ? 'bg-blue-500' : 'bg-emerald-500'} blur-sm animate-pulse`}></div>
                                         </div>
-                                        <span className="text-sm text-slate-700 dark:text-slate-300 font-bold tracking-wide">AI ACTIVE</span>
+                                        <span className="text-sm text-slate-700 dark:text-slate-300 font-bold tracking-wide">SYSTEM OK</span>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-6">

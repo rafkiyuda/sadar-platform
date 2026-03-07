@@ -1,12 +1,12 @@
 'use client';
-import { Home, Layers, Settings, Power, FileText, Sun, Moon, MessageSquare } from 'lucide-react';
+import { Home, Layers, Settings, Power, FileText, BarChart2, Sun, Moon, MessageSquare } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 
 interface SidebarProps {
     onSettingsClick: () => void;
-    onViewChange: (view: 'dashboard' | 'report' | 'settings' | 'chat') => void;
-    currentView: 'dashboard' | 'report' | 'settings' | 'chat';
+    onViewChange: (view: 'dashboard' | 'report-driver' | 'report-bos' | 'settings' | 'chat') => void;
+    currentView: 'dashboard' | 'report-driver' | 'report-bos' | 'settings' | 'chat';
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ onSettingsClick, onViewChange, currentView }) => {
@@ -46,11 +46,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSettingsClick, onViewChange,
                 </button>
 
                 <button
-                    onClick={() => onViewChange('report')}
-                    className={`p-3 rounded-2xl flex flex-col justify-center items-center gap-1 transition-all duration-200 ${currentView === 'report' ? 'bg-orange-50 dark:bg-orange-500/10 text-orange-600 shadow-sm' : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                    onClick={() => onViewChange('report-driver')}
+                    className={`p-3 rounded-2xl flex flex-col justify-center items-center gap-1 transition-all duration-200 ${currentView === 'report-driver' ? 'bg-orange-50 dark:bg-orange-500/10 text-orange-600 shadow-sm' : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
                 >
                     <FileText className="w-6 h-6" />
                     <span className="text-[10px] font-semibold">Laporan</span>
+                </button>
+
+                <button
+                    onClick={() => onViewChange('report-bos')}
+                    className={`p-3 rounded-2xl flex flex-col justify-center items-center gap-1 transition-all duration-200 ${currentView === 'report-bos' ? 'bg-orange-50 dark:bg-orange-500/10 text-orange-600 shadow-sm' : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                >
+                    <BarChart2 className="w-6 h-6" />
+                    <span className="text-[10px] font-semibold">Bos</span>
                 </button>
 
                 <button
