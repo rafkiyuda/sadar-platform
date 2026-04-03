@@ -4,7 +4,7 @@ import { useDriverStore } from '@/app/lib/store/useDriverStore';
 
 type LiveStatus = 'disconnected' | 'connecting' | 'connected' | 'error';
 
-const MODEL = "models/gemini-2.0-flash-exp-image-generation";
+const MODEL = "models/gemini-3.1-flash-live-preview";
 const HOST = "generativelanguage.googleapis.com";
 const WS_URL = `wss://${HOST}/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent`;
 
@@ -277,10 +277,10 @@ export function useMultimodalLive(apiKeyParam: string = "", location: string | n
 
                     const msg = {
                         realtimeInput: {
-                            mediaChunks: [{
+                            audio: {
                                 mimeType: "audio/pcm",
                                 data: base64Audio
-                            }]
+                            }
                         }
                     };
                     websocketRef.current.send(JSON.stringify(msg));
