@@ -25,6 +25,8 @@ export const useDriverStore = create<DriverState>()(
             aiMood: 'friendly', // Default mood
             alarmSettings: { enabled: false }, // Default alarm
             cameraMode: 'dual', // Default camera mode
+            currentAddress: null, // Initial location
+            currentCoords: null, // Initial coordinates
 
             setStatus: (status: DriverStatus) => set({ status }),
             setEAR: (ear: number) => set({ ear }),
@@ -38,6 +40,8 @@ export const useDriverStore = create<DriverState>()(
             setAiMood: (mood: AiMood) => set({ aiMood: mood }),
             setAlarmSettings: (settings: AlarmSetting) => set({ alarmSettings: settings }),
             setCameraMode: (mode: CameraMode) => set({ cameraMode: mode }),
+            setCurrentAddress: (address: string | null) => set({ currentAddress: address }),
+            setCurrentCoords: (coords: { lat: number; lng: number } | null) => set({ currentCoords: coords }),
 
             incrementDistance: (amount: number) =>
                 set((state) => ({

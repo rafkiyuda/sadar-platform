@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { MapPin, Coffee, Navigation, Locate } from 'lucide-react';
 import { EmergencyButton } from '../emergency/EmergencyButton';
+import { useDriverStore } from '@/app/lib/store/useDriverStore';
 
 interface MapPanelProps {
     status: string;
@@ -8,37 +9,25 @@ interface MapPanelProps {
 }
 
 export const MapPanel: React.FC<MapPanelProps> = ({ status, onEditContact }) => {
-    const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
+    const { currentCoords } = useDriverStore();
     const [loadingLocation, setLoadingLocation] = useState(true);
     const [recommendation, setRecommendation] = useState({ name: "Mencari Rest Area...", distance: "Scanning..." });
 
     useEffect(() => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    setLocation({
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
-                    });
-                    setLoadingLocation(false);
-                    // Mock recommendation update after location found
-                    setRecommendation({ name: "Rest Area Terdekat", distance: "2.5 km • 5 min" });
-                },
-                (error) => {
-                    console.error("Error fetching location:", error);
-                    setLoadingLocation(false);
-                    // Fallback to Jakarta
-                    setLocation({ lat: -6.2088, lng: 106.8456 });
-                }
-            );
-        } else {
+        if (currentCoords) {
             setLoadingLocation(false);
-            setLocation({ lat: -6.2088, lng: 106.8456 });
+            // POC Recommendation: Masjid Kifayatul Achyar is right next to UIN
+            setRecommendation({ 
+                name: "Masjid Kifayatul Achyar", 
+                distance: "200 m • 1 min" 
+            });
         }
-    }, []);
+    }, [currentCoords]);
+
+    const location = currentCoords || (loadingLocation ? null : { lat: -6.2088, lng: 106.8456 });
 
     const mapSrc = location
-        ? `https://www.google.com/maps/embed/v1/search?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&q=rest+area&center=${location.lat},${location.lng}&zoom=14`
+        ? `https://www.google.com/maps/embed/v1/search?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&q=UIN+Sunan+Gunung+Djati+Bandung&center=${location.lat},${location.lng}&zoom=16`
         : "";
 
     return (

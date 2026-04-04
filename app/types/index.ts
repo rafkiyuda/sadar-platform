@@ -54,5 +54,9 @@ export interface DriverState {
     setAiMood: (mood: AiMood) => void;
     setAlarmSettings: (settings: AlarmSetting) => void;
     setCameraMode: (mode: CameraMode) => void;
+    currentAddress: string | null;
+    setCurrentAddress: (address: string | null) => void;
+    currentCoords: { lat: number; lng: number } | null;
+    setCurrentCoords: (coords: { lat: number; lng: number } | null) => void;
 }
 

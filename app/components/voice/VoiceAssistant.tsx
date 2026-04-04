@@ -9,12 +9,14 @@ interface VoiceAssistantProps {
 }
 
 export const VoiceAssistant: React.FC<VoiceAssistantProps> = React.memo(({ apiKey }) => {
-    const [location, setLocation] = useState<string | null>(null);
-    const { connect, disconnect, status, volume, errorMessage } = useMultimodalLive(apiKey, location);
+    const { currentAddress, setCurrentAddress } = useDriverStore();
+    const { connect, disconnect, status, volume, errorMessage } = useMultimodalLive(apiKey, currentAddress);
     const [isActive, setIsActive] = useState(false);
     const incrementCallDuration = useDriverStore((state) => state.incrementCallDuration);
 
     const fetchAddress = async (lat: number, lng: number) => {
+        if (currentAddress) return; // Already have it
+
         try {
             const response = await fetch(
                 `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`
@@ -23,32 +25,34 @@ export const VoiceAssistant: React.FC<VoiceAssistantProps> = React.memo(({ apiKe
             if (data.status === 'OK' && data.results && data.results[0]) {
                 const address = data.results[0].formatted_address;
                 console.log("Resolved Address:", address);
-                // Simplify address for AI (remove postal code etc if too long)
-                setLocation(address);
+                setCurrentAddress(address);
             } else {
                 console.error("Geocoding API Error:", data.status, data.error_message);
-                // CRITICAL: Do NOT show coords to AI, or it will read them. 
-                // Just say null so it knows it doesn't have the address.
-                setLocation(null);
+                setCurrentAddress(null);
             }
         } catch (error) {
             console.error("Geocoding failed:", error);
-            setLocation(null);
+            setCurrentAddress(null);
         }
     };
 
     useEffect(() => {
-        if (navigator.geolocation) {
+        if (navigator.geolocation && !currentAddress) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    fetchAddress(position.coords.latitude, position.coords.longitude);
+                    const coords = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+                    useDriverStore.getState().setCurrentCoords(coords);
+                    fetchAddress(coords.lat, coords.lng);
                 },
                 (error) => {
                     console.error("Error fetching location for voice assistant:", error);
                 }
             );
         }
-    }, [apiKey]);
+    }, [apiKey, currentAddress]);
 
     useEffect(() => {
         let interval: NodeJS.Timeout;
@@ -121,7 +125,7 @@ export const VoiceAssistant: React.FC<VoiceAssistantProps> = React.memo(({ apiKe
 
             {/* Debug Location Display */}
             <div className="text-[10px] text-slate-400 max-w-[200px] text-center mt-2 font-mono">
-                {location || "Waiting for GPS..."}
+                {currentAddress || "Waiting for GPS..."}
             </div>
 
             {/* Error Message */}
