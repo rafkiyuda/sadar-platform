@@ -11,6 +11,7 @@ interface MapPanelProps {
 export const MapPanel: React.FC<MapPanelProps> = ({ status, onEditContact }) => {
     const { currentCoords } = useDriverStore();
     const [loadingLocation, setLoadingLocation] = useState(true);
+    const [isNavigating, setIsNavigating] = useState(false);
     const [recommendation, setRecommendation] = useState({ name: "Mencari Rest Area...", distance: "Scanning..." });
 
     useEffect(() => {
@@ -27,23 +28,41 @@ export const MapPanel: React.FC<MapPanelProps> = ({ status, onEditContact }) => 
     const location = currentCoords || (loadingLocation ? null : { lat: -6.2088, lng: 106.8456 });
 
     const mapSrc = location
-        ? `https://www.google.com/maps/embed/v1/search?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&q=UIN+Sunan+Gunung+Djati+Bandung&center=${location.lat},${location.lng}&zoom=16`
+        ? isNavigating 
+            ? `https://www.google.com/maps/embed/v1/directions?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&origin=${location.lat},${location.lng}&destination=Masjid+Kifayatul+Achyar+Bandung&mode=driving&zoom=15`
+            : `https://www.google.com/maps/embed/v1/search?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&q=UIN+Sunan+Gunung+Djati+Bandung&center=${location.lat},${location.lng}&zoom=16`
         : "";
 
     return (
         <div className="h-full w-full relative bg-slate-50 dark:bg-slate-900 rounded-[2rem] overflow-hidden group transition-colors duration-300">
             {/* Map Background */}
             {location ? (
-                <iframe
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    loading="lazy"
-                    allowFullScreen
-                    referrerPolicy="no-referrer-when-downgrade"
-                    src={mapSrc}
-                    className="dark:opacity-80 transition-opacity duration-300"
-                ></iframe>
+                <div className="h-full w-full relative">
+                    <iframe
+                        width="100%"
+                        height="100%"
+                        style={{ border: 0 }}
+                        loading="lazy"
+                        allowFullScreen
+                        referrerPolicy="no-referrer-when-downgrade"
+                        src={mapSrc}
+                        key={isNavigating ? "nav" : "search"} // Force iframe reload on mode change
+                        className="dark:opacity-80 transition-opacity duration-300"
+                    ></iframe>
+                    
+                    {/* Navigation Overlay */}
+                    {isNavigating && (
+                        <div className="absolute top-4 left-4 bg-emerald-600 text-white px-4 py-2 rounded-xl shadow-lg flex items-center gap-3 animate-in fade-in slide-in-from-top duration-500">
+                           <div className="bg-white/20 p-1.5 rounded-full animate-pulse">
+                               <Navigation className="w-4 h-4" />
+                           </div>
+                           <div>
+                               <div className="text-[10px] font-bold opacity-80 uppercase tracking-tighter">Navigating To</div>
+                               <div className="text-xs font-bold leading-none">{recommendation.name}</div>
+                           </div>
+                        </div>
+                    )}
+                </div>
             ) : (
                 <div className="h-full w-full flex items-center justify-center bg-slate-100 dark:bg-slate-800 transition-colors duration-300">
                     <div className="flex flex-col items-center animate-pulse">
@@ -58,8 +77,14 @@ export const MapPanel: React.FC<MapPanelProps> = ({ status, onEditContact }) => 
 
             {/* Top Controls */}
             <div className="absolute top-4 right-4 flex flex-col gap-2">
-                <button className="bg-white/90 dark:bg-slate-800/90 p-3 rounded-2xl text-slate-700 dark:text-slate-300 shadow-sm backdrop-blur-sm border border-slate-100 dark:border-slate-700 hover:bg-orange-50 dark:hover:bg-orange-500/20 hover:text-orange-600 dark:hover:text-orange-400 transition group/btn">
-                    <Navigation className="w-6 h-6 group-hover/btn:rotate-45 transition-transform" />
+                <button 
+                    onClick={() => setIsNavigating(!isNavigating)}
+                    className={`p-3 rounded-2xl shadow-sm backdrop-blur-sm border transition group/btn ${
+                        isNavigating 
+                        ? 'bg-emerald-600 text-white border-emerald-500' 
+                        : 'bg-white/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-300 border-slate-100 dark:border-slate-700 hover:bg-orange-50 dark:hover:bg-orange-500/20'
+                    }`}>
+                    <Navigation className={`w-6 h-6 ${isNavigating ? 'animate-bounce' : 'group-hover/btn:rotate-45'} transition-transform`} />
                 </button>
                 <button className="bg-white/90 dark:bg-slate-800/90 p-3 rounded-2xl text-slate-700 dark:text-slate-300 shadow-sm backdrop-blur-sm border border-slate-100 dark:border-slate-700 hover:bg-emerald-50 dark:hover:bg-emerald-500/20 hover:text-emerald-600 dark:hover:text-emerald-400 transition">
                     <Locate className="w-6 h-6" />
@@ -83,8 +108,14 @@ export const MapPanel: React.FC<MapPanelProps> = ({ status, onEditContact }) => 
                             </p>
                         </div>
                     </div>
-                    <button className="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-3 rounded-2xl font-bold text-sm transition shadow-md shadow-emerald-600/20 dark:shadow-emerald-900/40 active:scale-95">
-                        NAVIGASI
+                    <button 
+                        onClick={() => setIsNavigating(!isNavigating)}
+                        className={`${
+                            isNavigating 
+                            ? 'bg-slate-800 hover:bg-slate-700 text-white' 
+                            : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-600/20 dark:shadow-emerald-900/40'
+                        } px-6 py-3 rounded-2xl font-bold text-sm transition shadow-md active:scale-95`}>
+                        {isNavigating ? 'SELESAI' : 'NAVIGASI'}
                     </button>
                 </div>
 
