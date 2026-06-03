@@ -17,20 +17,20 @@ export const MapPanel: React.FC<MapPanelProps> = ({ status, onEditContact }) => 
     useEffect(() => {
         if (currentCoords) {
             setLoadingLocation(false);
-            // POC Recommendation: Masjid Kifayatul Achyar is right next to UIN
+            // POC Recommendation: Kopi Nako Alam Sutera
             setRecommendation({ 
-                name: "Masjid Kifayatul Achyar", 
-                distance: "200 m • 1 min" 
+                name: "Kopi Nako Alam Sutera", 
+                distance: "450 m • 2 min" 
             });
         }
     }, [currentCoords]);
 
-    const location = currentCoords || (loadingLocation ? null : { lat: -6.2088, lng: 106.8456 });
+    const location = currentCoords || (loadingLocation ? null : { lat: -6.2307, lng: 106.6575 });
 
     const mapSrc = location
         ? isNavigating 
-            ? `https://www.google.com/maps/embed/v1/directions?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&origin=${location.lat},${location.lng}&destination=Masjid+Kifayatul+Achyar+Bandung&mode=driving&zoom=15`
-            : `https://www.google.com/maps/embed/v1/search?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&q=UIN+Sunan+Gunung+Djati+Bandung&center=${location.lat},${location.lng}&zoom=16`
+            ? `https://www.google.com/maps/embed/v1/directions?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&origin=${location.lat},${location.lng}&destination=Kopi+Nako+Alam+Sutera&mode=driving&zoom=15`
+            : `https://www.google.com/maps/embed/v1/search?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&q=Binus+University+Alam+Sutera&center=${location.lat},${location.lng}&zoom=16`
         : "";
 
     return (

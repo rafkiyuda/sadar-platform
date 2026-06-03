@@ -32,7 +32,7 @@ export const Header: React.FC<HeaderProps> = ({ status }) => {
 
     const getDisplayAddress = () => {
         // POC FORCE: Always show the presentation location for maximum impact
-        return "UIN Sunan Gunung Djati, Bandung";
+        return "Binus Alam Sutera, Tangerang";
     };
 
     return (
