@@ -31,8 +31,7 @@ export const Header: React.FC<HeaderProps> = ({ status }) => {
     };
 
     const getDisplayAddress = () => {
-        // POC FORCE: Always show the presentation location for maximum impact
-        return "Binus Alam Sutera, Tangerang";
+        return currentAddress || "Menara Astra, Sudirman, Jakarta Pusat";
     };
 
     return (

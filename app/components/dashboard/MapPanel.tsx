@@ -17,20 +17,20 @@ export const MapPanel: React.FC<MapPanelProps> = ({ status, onEditContact }) => 
     useEffect(() => {
         if (currentCoords) {
             setLoadingLocation(false);
-            // POC Recommendation: Kopi Nako Alam Sutera
+            // Recommendation: Crematology Coffee Roasters Menara Astra
             setRecommendation({ 
-                name: "Kopi Nako Alam Sutera", 
-                distance: "450 m • 2 min" 
+                name: "Crematology Coffee - Menara Astra", 
+                distance: "100 m • 1 min" 
             });
         }
     }, [currentCoords]);
 
-    const location = currentCoords || (loadingLocation ? null : { lat: -6.2307, lng: 106.6575 });
+    const location = currentCoords || (loadingLocation ? null : { lat: -6.209140, lng: 106.821680 });
 
     const mapSrc = location
         ? isNavigating 
-            ? `https://www.google.com/maps/embed/v1/directions?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&origin=${location.lat},${location.lng}&destination=Kopi+Nako+Alam+Sutera&mode=driving&zoom=15`
-            : `https://www.google.com/maps/embed/v1/search?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&q=Binus+University+Alam+Sutera&center=${location.lat},${location.lng}&zoom=16`
+            ? `https://www.google.com/maps/embed/v1/directions?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&origin=${location.lat},${location.lng}&destination=Crematology+Coffee+Roasters+Menara+Astra+Sudirman&mode=driving&zoom=15`
+            : `https://www.google.com/maps/embed/v1/search?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&q=Menara+Astra+Jakarta&center=${location.lat},${location.lng}&zoom=16`
         : "";
 
     return (

@@ -25,8 +25,8 @@ export const useDriverStore = create<DriverState>()(
             aiMood: 'friendly', // Default mood
             alarmSettings: { enabled: false }, // Default alarm
             cameraMode: 'dual', // Default camera mode
-            currentAddress: null, // Initial location
-            currentCoords: null, // Initial coordinates
+            currentAddress: 'Menara Astra, Sudirman, Jakarta Pusat', // Initial location
+            currentCoords: { lat: -6.209140, lng: 106.821680 }, // Initial coordinates
 
             setStatus: (status: DriverStatus) => set({ status }),
             setEAR: (ear: number) => set({ ear }),
